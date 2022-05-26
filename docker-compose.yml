@@ -1,0 +1,14 @@
+version: "3"
+services:
+  backend:
+    image: ghcr.io/int371-13-49-129/int371:dev
+    container_name: backend
+    networks:
+       allnetwork:
+          ipv4_address: 172.20.0.3
+networks:
+  default:
+    external:
+       name: allnetwork
+  allnetwork:
+    external: true
