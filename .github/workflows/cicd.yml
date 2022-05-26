@@ -1,4 +1,4 @@
-name: client
+name: back
 on:
   push:
     branches:
@@ -19,7 +19,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: ghcr.io/int371-13-49-129/int371:dev
+          tags: ghcr.io/int371-13-49-129/int371back:dev
 
   deploy:
     needs:
@@ -32,7 +32,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            cd ./client
+            cd ./Back
             docker-compose down
             docker-compose pull
             docker-compose up -d
