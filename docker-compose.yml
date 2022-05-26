@@ -1,7 +1,7 @@
 version: "3"
 services:
   backend:
-    image: ghcr.io/int371-13-49-129/int371:dev
+    image: ghcr.io/int371-13-49-129/int371back:dev
     environment:
       - MYSQL_DATABASE=jaid_db
       - MYSQL_USER=root
