@@ -2,6 +2,10 @@ version: "3"
 services:
   backend:
     image: ghcr.io/int371-13-49-129/int371:dev
+    environment:
+      - MYSQL_DATABASE=jaid_db
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=kamin124712
     container_name: backend
     networks:
        allnetwork:
