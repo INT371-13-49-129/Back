@@ -4,7 +4,7 @@ require("dotenv").config();
 
 config = {
   port: process.env.PORT || 3000,
-  host: process.env.HOST || "jaidee.3utilities.com",
+  host: process.env.HOST || "20.239.85.137",
   user: process.env.USER_DB || "root",
   port_db: process.env.PORT_DB || "3306",
   password: process.env.PASS_DB || "kamin124712",
