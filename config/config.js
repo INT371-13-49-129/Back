@@ -9,7 +9,7 @@ config = {
   port_db: process.env.PORT_DB || "3306",
   password: process.env.PASS_DB || "kamin124712",
   database: process.env.NAME_DB || "jaid_db",
-  front_url: process.env.FRONT_URL || "jaidee.3utilities.com",
+  front_url: process.env.FRONT_URL || "https://jaidee.3utilities.com",
   mail_pass:  process.env.MAIL_PASS || "rotmpdzovxpdwiom",
 };
 module.exports = config;
