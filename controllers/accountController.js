@@ -96,7 +96,15 @@ exports.loginMember= async (req,res)=>{
       if(user && bcrypt.compareSync(password, user.password)){
         if (user.status == 'Waiting') return res.status(400).send({ status: "error", error: "Waiting for email confirmation." })
         const jwt = token({account_id:user.account_id})
-        return res.status(200).send({jwt,account:user})
+        return res.status(200).send(
+          {jwt,account:{
+            account_id:user.account_id,
+            username:user.username,
+            email:user.email,
+            gender:user.gender,
+            image_url:user.image_url,
+            date_of_birth:user.date_of_birth
+      }})
       }else{
         return res.status(400).json({error:"Email or password is incorrect!"})
       }
@@ -107,4 +115,44 @@ exports.loginMember= async (req,res)=>{
         error: error,
       });
     } 
+}
+
+exports.getAccount = async (req,res)=>{
+  const { account_id } = req.jwt
+  try {
+    const user = await accountService.getAccountByAccountId( account_id )
+      return res.status(200).send({
+          account:{
+              account_id:user.account_id,
+              username:user.username,
+              email:user.email,
+              gender:user.gender,
+              image_url:user.image_url,
+              date_of_birth:user.date_of_birth
+          }
+      })
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      status: "error",
+      error: error,
+    });
+  } 
+}
+
+exports.logoutMember= async (req,res)=>{
+  const token = req.token
+  const { account_id } = req.jwt
+  try {
+    await jsonWebTokenService.createJsonWebToken({token_type:"Logout", token, account_id })
+    res.status(200).send({
+      status: "success"
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      status: "error",
+      error: error,
+    });
+  } 
 }
