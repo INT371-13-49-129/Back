@@ -42,7 +42,7 @@ exports.getPostByPostId = (post_id) => {
             is_delete: false,
             reply_comment_id: null,
           },
-          attributes: ["comment_id", "text", "createdAt"],
+          attributes: ["comment_id", "text", "createdAt", "post_id"],
           include: [
             {
               model: account,
@@ -58,7 +58,7 @@ exports.getPostByPostId = (post_id) => {
               where: {
                 is_delete: false,
               },
-              attributes: ["comment_id", "text", "createdAt"],
+              attributes: ["comment_id", "text", "createdAt", "post_id"],
               include: [
                 {
                   model: account,
@@ -191,7 +191,7 @@ exports.getAllPost = () => {
               is_delete: false,
               reply_comment_id: null,
             },
-            attributes: ["comment_id", "text", "createdAt"],
+            attributes: ["comment_id", "text", "createdAt", "post_id"],
             include: [
               {
                 model: account,
@@ -207,7 +207,7 @@ exports.getAllPost = () => {
                 where: {
                   is_delete: false,
                 },
-                attributes: ["comment_id", "text", "createdAt"],
+                attributes: ["comment_id", "text", "createdAt", "post_id"],
                 include: [
                   {
                     model: account,
