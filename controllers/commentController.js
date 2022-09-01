@@ -1,4 +1,5 @@
 const commentService = require("../service/commentService");
+const { statusCode, errorResponse } = require("../utils/errorResponse");
 
 exports.createComment = async (req, res) => {
     const { account_id } = req.jwt
@@ -10,9 +11,10 @@ exports.createComment = async (req, res) => {
       });
     } catch (error) {
       console.log(error);
-      res.status(400).send({
-        status: "error",
-        error: error,
+      errorResponse(res, {
+        statusResponse: 500,
+        statusCode: statusCode(1001),
+        errorMessage: error,
       });
     }
 };

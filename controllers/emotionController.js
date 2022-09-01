@@ -1,4 +1,5 @@
 const emotionService = require("../service/emotionService");
+const { statusCode, errorResponse } = require("../utils/errorResponse");
 
 exports.updateEmotion = async (req, res) => {
     const { account_id } = req.jwt
@@ -25,9 +26,10 @@ exports.updateEmotion = async (req, res) => {
       });
     } catch (error) {
       console.log(error);
-      res.status(400).send({
-        status: "error",
-        error: error,
+      errorResponse(res, {
+        statusResponse: 500,
+        statusCode: statusCode(1001),
+        errorMessage: error,
       });
     }
 };
