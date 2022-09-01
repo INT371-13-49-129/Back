@@ -54,9 +54,11 @@ db.post.belongsTo(db.account, {
 });
 
 db.post.hasMany(db.post, {
+  as: 'posts',
   foreignKey: "refer_post_id",
 });
 db.post.belongsTo(db.post, {
+  as: 'refer_post',
   foreignKey: "refer_post_id",
 });
 

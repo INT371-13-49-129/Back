@@ -147,13 +147,13 @@ exports.getPostByPostId = (post_id) => {
           ],
         },
         {
-            model: post,
-            required: false,
-            where: {
-              is_delete: false,
-            },
-            attributes: ["post_id"],
-        }
+          model: post,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["post_id"],
+        },
       ],
     });
   } catch (error) {
@@ -162,151 +162,213 @@ exports.getPostByPostId = (post_id) => {
 };
 
 exports.getAllPost = () => {
-    try {
-      return post.findAll({
-        where: {
-          is_delete: false,
+  try {
+    return post.findAll({
+      where: {
+        is_delete: false,
+      },
+      attributes: [
+        "post_id",
+        "text",
+        "post_type",
+        "post_status",
+        "publish_status",
+        "createdAt",
+      ],
+      include: [
+        {
+          model: account,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["account_id", "username", "image_url"],
         },
-        attributes: [
-          "post_id",
-          "text",
-          "post_type",
-          "post_status",
-          "publish_status",
-          "createdAt",
-        ],
-        include: [
-          {
-            model: account,
-            required: false,
-            where: {
-              is_delete: false,
-            },
-            attributes: ["account_id", "username", "image_url"],
+        {
+          model: comment,
+          required: false,
+          where: {
+            is_delete: false,
+            reply_comment_id: null,
           },
-          {
-            model: comment,
-            required: false,
-            where: {
-              is_delete: false,
-              reply_comment_id: null,
-            },
-            attributes: ["comment_id", "text", "createdAt", "post_id"],
-            include: [
-              {
-                model: account,
-                required: false,
-                where: {
-                  is_delete: false,
-                },
-                attributes: ["account_id", "username", "image_url"],
-              },
-              {
-                model: comment,
-                required: false,
-                where: {
-                  is_delete: false,
-                },
-                attributes: ["comment_id", "text", "createdAt", "post_id"],
-                include: [
-                  {
-                    model: account,
-                    required: false,
-                    where: {
-                      is_delete: false,
-                    },
-                    attributes: ["account_id", "username", "image_url"],
-                  },
-                  {
-                    model: emotion,
-                    required: false,
-                    where: {
-                      is_delete: false,
-                      is_emotion: true,
-                    },
-                    attributes: ["emotion_id"],
-                    include: [
-                      {
-                        model: account,
-                        required: false,
-                        where: {
-                          is_delete: false,
-                        },
-                        attributes: ["account_id", "username", "image_url"],
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                model: emotion,
-                required: false,
-                where: {
-                  is_delete: false,
-                  is_emotion: true,
-                },
-                attributes: ["emotion_id"],
-                include: [
-                  {
-                    model: account,
-                    required: false,
-                    where: {
-                      is_delete: false,
-                    },
-                    attributes: ["account_id", "username", "image_url"],
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            model: emotion,
-            required: false,
-            where: {
-              is_delete: false,
-              is_emotion: true,
-            },
-            attributes: ["emotion_id"],
-            include: [
-              {
-                model: account,
-                required: false,
-                where: {
-                  is_delete: false,
-                },
-                attributes: ["account_id", "username", "image_url"],
-              },
-            ],
-          },
-          {
-            model: post_tag,
-            required: false,
-            where: {
-              is_delete: false,
-            },
-            attributes: ["post_tag_id"],
-            include: [
-              {
-                model: tag,
-                where: {
-                  is_delete: false,
-                },
-                attributes: ["tag_id", "tag_type", "name"],
-              },
-            ],
-          },
-          {
-              model: post,
+          attributes: ["comment_id", "text", "createdAt", "post_id"],
+          include: [
+            {
+              model: account,
               required: false,
               where: {
                 is_delete: false,
               },
-              attributes: ["post_id"],
-          }
-        ],
-      });
-    } catch (error) {
-      throw error;
-    }
-  };
-  
+              attributes: ["account_id", "username", "image_url"],
+            },
+            {
+              model: comment,
+              required: false,
+              where: {
+                is_delete: false,
+              },
+              attributes: ["comment_id", "text", "createdAt", "post_id"],
+              include: [
+                {
+                  model: account,
+                  required: false,
+                  where: {
+                    is_delete: false,
+                  },
+                  attributes: ["account_id", "username", "image_url"],
+                },
+                {
+                  model: emotion,
+                  required: false,
+                  where: {
+                    is_delete: false,
+                    is_emotion: true,
+                  },
+                  attributes: ["emotion_id"],
+                  include: [
+                    {
+                      model: account,
+                      required: false,
+                      where: {
+                        is_delete: false,
+                      },
+                      attributes: ["account_id", "username", "image_url"],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              model: emotion,
+              required: false,
+              where: {
+                is_delete: false,
+                is_emotion: true,
+              },
+              attributes: ["emotion_id"],
+              include: [
+                {
+                  model: account,
+                  required: false,
+                  where: {
+                    is_delete: false,
+                  },
+                  attributes: ["account_id", "username", "image_url"],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: emotion,
+          required: false,
+          where: {
+            is_delete: false,
+            is_emotion: true,
+          },
+          attributes: ["emotion_id"],
+          include: [
+            {
+              model: account,
+              required: false,
+              where: {
+                is_delete: false,
+              },
+              attributes: ["account_id", "username", "image_url"],
+            },
+          ],
+        },
+        {
+          model: post_tag,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["post_tag_id"],
+          include: [
+            {
+              model: tag,
+              where: {
+                is_delete: false,
+              },
+              attributes: ["tag_id", "tag_type", "name"],
+            },
+          ],
+        },
+        {
+          model: post,
+          as: "refer_post",
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: [
+            "post_id",
+            "text",
+            "post_type",
+            "post_status",
+            "publish_status",
+            "createdAt",
+          ],
+          include: [
+            {
+              model: account,
+              required: false,
+              where: {
+                is_delete: false,
+              },
+              attributes: ["account_id", "username", "image_url"],
+            },
+            {
+              model: emotion,
+              required: false,
+              where: {
+                is_delete: false,
+                is_emotion: true,
+              },
+              attributes: ["emotion_id"],
+              include: [
+                {
+                  model: account,
+                  required: false,
+                  where: {
+                    is_delete: false,
+                  },
+                  attributes: ["account_id", "username", "image_url"],
+                },
+              ],
+            },
+            {
+              model: post_tag,
+              required: false,
+              where: {
+                is_delete: false,
+              },
+              attributes: ["post_tag_id"],
+              include: [
+                {
+                  model: tag,
+                  where: {
+                    is_delete: false,
+                  },
+                  attributes: ["tag_id", "tag_type", "name"],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          model: post,
+          as: "posts",
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["post_id"],
+        },
+      ],
+    });
+  } catch (error) {
+    throw error;
+  }
+};
