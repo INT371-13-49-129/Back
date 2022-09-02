@@ -9,8 +9,11 @@ module.exports.statusCode = function (code) {
     2004: "ACCOUNT_STATUS_INCORRECT",
     2005: "ACCOUNT_EMAIL_OR_PASSWORD_INCORRECT",
     2006: "ACCOUNT_WAITING_EMAIL_CONFIRM",
+    2007: "ACCOUNT_UNAUTHORIZED",
 
     3001: "POST_DOES_NOT_EXIST",
+
+    4001: "COMMENT_DOES_NOT_EXIST",
   };
   Object.freeze(status_code);
   return status_code[code];

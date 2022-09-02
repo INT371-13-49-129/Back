@@ -38,6 +38,7 @@ db.comment = require("../models/comment")(sequelize, Sequelize);
 db.tag = require("../models/tag")(sequelize, Sequelize);
 db.post_tag = require("../models/postTag")(sequelize, Sequelize);
 db.emotion = require("../models/emotion")(sequelize, Sequelize);
+db.log_edit = require("../models/logEdit")(sequelize, Sequelize);
 
 db.account.hasMany(db.json_web_token, {
   foreignKey: "account_id",
@@ -115,6 +116,20 @@ db.comment.hasMany(db.emotion, {
   foreignKey: "comment_id",
 });
 db.emotion.belongsTo(db.comment, {
+  foreignKey: "comment_id",
+});
+
+db.post.hasMany(db.log_edit, {
+  foreignKey: "post_id",
+});
+db.log_edit.belongsTo(db.post, {
+  foreignKey: "post_id",
+});
+
+db.comment.hasMany(db.log_edit, {
+  foreignKey: "comment_id",
+});
+db.log_edit.belongsTo(db.comment, {
   foreignKey: "comment_id",
 });
 

@@ -17,11 +17,15 @@ router.delete("/member/logoutMember",auth ,accountController.logoutMember);
 router.post("/member/createPost",auth ,postController.createPost);
 router.get("/member/getPost/:post_id", postController.getPost);
 router.get("/member/getAllPost", postController.getAllPost);
+router.put("/member/updatePost",auth , postController.updatePost);
+router.delete("/member/deletePost/:post_id",auth , postController.deletePost);
 
 router.post("/member/createTag", tagController.createTag);
 router.get("/member/getAllTag", tagController.getAllTag);
 
 router.post("/member/createComment",auth ,commentController.createComment);
+router.put("/member/updateComment",auth ,commentController.updateComment);
+router.delete("/member/deleteComment/:comment_id",auth , commentController.deleteComment);
 
 router.put("/member/updateEmotion",auth ,emotionController.updateEmotion);
 
