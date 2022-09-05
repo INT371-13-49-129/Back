@@ -199,6 +199,14 @@ const post_include = [
           },
         ],
       },
+      {
+        model: log_edit,
+        required: false,
+        where: {
+          is_delete: false,
+        },
+        attributes: ["log_edit_id", "log_data", "createdAt"],
+      },
     ],
   },
   {
