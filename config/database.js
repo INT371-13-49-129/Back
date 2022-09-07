@@ -39,6 +39,8 @@ db.tag = require("../models/tag")(sequelize, Sequelize);
 db.post_tag = require("../models/postTag")(sequelize, Sequelize);
 db.emotion = require("../models/emotion")(sequelize, Sequelize);
 db.log_edit = require("../models/logEdit")(sequelize, Sequelize);
+db.message_connect = require("../models/messageConnect")(sequelize, Sequelize);
+db.message = require("../models/message")(sequelize, Sequelize);
 
 db.account.hasMany(db.json_web_token, {
   foreignKey: "account_id",
@@ -131,6 +133,36 @@ db.comment.hasMany(db.log_edit, {
 });
 db.log_edit.belongsTo(db.comment, {
   foreignKey: "comment_id",
+});
+
+db.account.hasMany(db.message_connect, {
+  foreignKey: "account_id_1",
+});
+db.message_connect.belongsTo(db.account, {
+  as: 'account_1',
+  foreignKey: "account_id_1",
+});
+
+db.account.hasMany(db.message_connect, {
+  foreignKey: "account_id_2",
+});
+db.message_connect.belongsTo(db.account, {
+  as: 'account_2',
+  foreignKey: "account_id_2",
+});
+
+db.message_connect.hasMany(db.message, {
+  foreignKey: "message_connect_id",
+});
+db.message.belongsTo(db.message_connect, {
+  foreignKey: "message_connect_id",
+});
+
+db.account.hasMany(db.message, {
+  foreignKey: "account_id",
+});
+db.message.belongsTo(db.account, {
+  foreignKey: "account_id",
 });
 
 module.exports = db;

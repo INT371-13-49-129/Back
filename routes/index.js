@@ -6,6 +6,7 @@ const postController = require("../controllers/postController");
 const tagController = require("../controllers/tagController");
 const commentController = require("../controllers/commentController");
 const emotionController = require("../controllers/emotionController");
+const messageController = require("../controllers/messageController");
 
 router.post("/member/createAccount", accountController.createAccountMember);
 router.put("/member/confirmEmail", accountController.confirmEmail);
@@ -13,6 +14,7 @@ router.post("/member/resendMail", accountController.resendMail);
 router.post("/member/loginMember", accountController.loginMember);
 router.get("/member/myAccount",auth ,accountController.getAccount);
 router.delete("/member/logoutMember",auth ,accountController.logoutMember);
+router.get("/member/getAllAccount",auth ,accountController.getAllAccount);
 
 router.post("/member/createPost",auth ,postController.createPost);
 router.get("/member/getPost/:post_id", postController.getPost);
@@ -28,5 +30,12 @@ router.put("/member/updateComment",auth ,commentController.updateComment);
 router.delete("/member/deleteComment/:comment_id",auth , commentController.deleteComment);
 
 router.put("/member/updateEmotion",auth ,emotionController.updateEmotion);
+
+router.post("/member/createMessageConnect",auth ,messageController.createMessageConnect);
+router.get("/member/getMessageConnect/:account_id_2",auth ,messageController.getMessageConnect);
+router.get("/member/getAllMessageConnect",auth ,messageController.getAllMessageConnect);
+
+router.post("/member/createMessage",auth ,messageController.createMessage);
+router.put("/member/readMessage",auth ,messageController.readMessage);
 
 module.exports = router;

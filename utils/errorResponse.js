@@ -14,6 +14,9 @@ module.exports.statusCode = function (code) {
     3001: "POST_DOES_NOT_EXIST",
 
     4001: "COMMENT_DOES_NOT_EXIST",
+
+    5001: "MESSAGE_CONNECT_ALREADY_EXISTS",
+    5002: "MESSAGE_CONNECT_DOES_NOT_EXIST",
   };
   Object.freeze(status_code);
   return status_code[code];

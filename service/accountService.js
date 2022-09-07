@@ -1,14 +1,14 @@
 const { Op } = require("sequelize");
 const moment = require("moment");
 const database = require("../config/database");
-const { account,sequelize } = database;
+const { account, sequelize } = database;
 
 exports.createAccount = (data) => {
-    try {
-      return account.create(data);
-    } catch (error) {
-      throw error;
-    }
+  try {
+    return account.create(data);
+  } catch (error) {
+    throw error;
+  }
 };
 
 exports.getAccountByUsername = (username) => {
@@ -16,8 +16,8 @@ exports.getAccountByUsername = (username) => {
     return account.findOne({
       where: {
         username: username,
-        is_delete: false
-      }
+        is_delete: false,
+      },
     });
   } catch (error) {
     throw error;
@@ -29,39 +29,49 @@ exports.getAccountByEmail = (email) => {
     return account.findOne({
       where: {
         email: email,
-        is_delete: false
-      }
+        is_delete: false,
+      },
     });
   } catch (error) {
     throw error;
   }
 };
 
-exports.getAccountByAccountId = ( account_id ) => {
+exports.getAccountByAccountId = (account_id) => {
   try {
     return account.findOne({
       where: {
         account_id: account_id,
-        is_delete: false
-      }
+        is_delete: false,
+      },
     });
   } catch (error) {
     throw error;
   }
 };
 
-exports.updateAccount = (account_id,payload) => {
+exports.updateAccount = (account_id, payload) => {
   try {
-    return account.update(
-      payload,
-      {
-        where: {
-          account_id,
-          is_delete: false,
-        },
-      }
-    )
+    return account.update(payload, {
+      where: {
+        account_id,
+        is_delete: false,
+      },
+    });
   } catch (e) {
-    throw e
+    throw e;
   }
-}
+};
+
+exports.getAllAccount = () => {
+  try {
+    return account.findAll({
+      where: {
+        is_delete: false,
+      },
+      attributes: ["account_id", "username", "image_url"],
+    });
+  } catch (error) {
+    throw error;
+  }
+};

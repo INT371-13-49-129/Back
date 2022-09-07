@@ -156,11 +156,11 @@ exports.loginMember = async (req, res) => {
     const user = await accountService.getAccountByEmail(email);
     if (user && bcrypt.compareSync(password, user.password)) {
       if (user.status == "Waiting")
-      return errorResponse(res, {
-        statusResponse: 400,
-        statusCode: statusCode(2006),
-        errorMessage: `Waiting for email confirmation`,
-      });
+        return errorResponse(res, {
+          statusResponse: 400,
+          statusCode: statusCode(2006),
+          errorMessage: `Waiting for email confirmation`,
+        });
       const jwt = token({ account_id: user.account_id });
       return res.status(200).send({
         jwt,
@@ -226,6 +226,20 @@ exports.logoutMember = async (req, res) => {
     res.status(200).send({
       status: "success",
     });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.getAllAccount = async (req, res) => {
+  try {
+    const accounts = await accountService.getAllAccount();
+    return res.status(200).send({ accounts });
   } catch (error) {
     console.log(error);
     errorResponse(res, {
