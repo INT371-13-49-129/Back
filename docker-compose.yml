@@ -7,8 +7,6 @@ services:
       - MYSQL_DATABASE=jaid_db
       - MYSQL_USER=root
       - MYSQL_ROOT_PASSWORD=kamin124712
-    ports:
-      - "3000:3000"
     networks:
       allnetwork:
         ipv4_address: 172.20.0.3
