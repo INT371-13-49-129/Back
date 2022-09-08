@@ -1,14 +1,18 @@
 version: "3"
 services:
   backend:
-    image: ghcr.io/int371-13-49-129/int371:dev
     container_name: backend
+    image: ghcr.io/int371-13-49-129/int371back:dev
+    environment:
+      - MYSQL_DATABASE=jaid_db
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=kamin124712
     networks:
-       allnetwork:
-          ipv4_address: 172.20.0.3
+      allnetwork:
+        ipv4_address: 172.20.0.3
 networks:
   default:
     external:
-       name: allnetwork
+      name: allnetwork
   allnetwork:
     external: true
