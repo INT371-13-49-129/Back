@@ -1,4 +1,5 @@
 const tagService = require("../service/tagService");
+const { statusCode, errorResponse } = require("../utils/errorResponse");
 
 exports.createTag = async (req, res) => {
     const { name, tag_type } = req.body;
@@ -9,9 +10,10 @@ exports.createTag = async (req, res) => {
       });
     } catch (error) {
       console.log(error);
-      res.status(400).send({
-        status: "error",
-        error: error,
+      errorResponse(res, {
+        statusResponse: 500,
+        statusCode: statusCode(1001),
+        errorMessage: error,
       });
     }
 };
@@ -25,9 +27,10 @@ exports.getAllTag = async (req, res) => {
       });
     } catch (error) {
       console.log(error);
-      res.status(400).send({
-        status: "error",
-        error: error,
+      errorResponse(res, {
+        statusResponse: 500,
+        statusCode: statusCode(1001),
+        errorMessage: error,
       });
     }
 };
