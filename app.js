@@ -44,6 +44,7 @@ app.get("/", (req, res) => {
 app.use("/api", Routers);
 
 io.on("connection", function (socket) {
+  console.log(socket)
   socket.on("disconnect", function () {});
 });
 
