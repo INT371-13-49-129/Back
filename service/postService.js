@@ -293,3 +293,26 @@ exports.getAllPost = () => {
     throw error;
   }
 };
+
+exports.getAllMyPost = (account_id) => {
+  try {
+    return post.findAll({
+      where: {
+        is_delete: false,
+        account_id
+      },
+      attributes: [
+        "post_id",
+        "text",
+        "post_type",
+        "post_status",
+        "publish_status",
+        "createdAt",
+        "updatedAt",
+      ],
+      include: post_include
+    });
+  } catch (error) {
+    throw error;
+  }
+};

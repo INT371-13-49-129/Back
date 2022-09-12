@@ -67,6 +67,21 @@ exports.getAllPost = async (req, res) => {
   }
 };
 
+exports.getAllMyPost = async (req, res) => {
+  const { account_id } = req.jwt;
+  try {
+    const posts = await postService.getAllMyPost(account_id);
+    return res.status(200).send({ posts });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
 exports.updatePost = async (req, res) => {
   const { account_id } = req.jwt;
   const { post_id, text, post_tags } = req.body;

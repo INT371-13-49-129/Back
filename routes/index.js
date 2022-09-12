@@ -7,6 +7,8 @@ const tagController = require("../controllers/tagController");
 const commentController = require("../controllers/commentController");
 const emotionController = require("../controllers/emotionController");
 const messageController = require("../controllers/messageController");
+const fileController = require("../controllers/fileController");
+const topicController = require("../controllers/topicController");
 
 router.post("/member/createAccount", accountController.createAccountMember);
 router.put("/member/confirmEmail", accountController.confirmEmail);
@@ -15,10 +17,13 @@ router.post("/member/loginMember", accountController.loginMember);
 router.get("/member/myAccount",auth ,accountController.getAccount);
 router.delete("/member/logoutMember",auth ,accountController.logoutMember);
 router.get("/member/getAllAccount",auth ,accountController.getAllAccount);
+router.get("/member/account/:account_id" ,accountController.getAccountByAccountId);
+router.put("/member/updateAccountProfile",auth , accountController.updateAccountProfile);
 
 router.post("/member/createPost",auth ,postController.createPost);
 router.get("/member/getPost/:post_id", postController.getPost);
 router.get("/member/getAllPost", postController.getAllPost);
+router.get("/member/getAllMyPost",auth , postController.getAllMyPost);
 router.put("/member/updatePost",auth , postController.updatePost);
 router.delete("/member/deletePost/:post_id",auth , postController.deletePost);
 
@@ -37,5 +42,11 @@ router.get("/member/getAllMessageConnect",auth ,messageController.getAllMessageC
 
 router.post("/member/createMessage",auth ,messageController.createMessage);
 router.put("/member/readMessage",auth ,messageController.readMessage);
+
+router.post("/member/uploadFile",auth ,fileController.uploadFile);
+router.get("/member/getFile/:file_id" ,fileController.getFile);
+
+router.post("/member/createTopic", topicController.createTopic);
+router.get("/member/getAllTopic", topicController.getAllTopic);
 
 module.exports = router;
