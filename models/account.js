@@ -19,7 +19,9 @@ module.exports = (sequelize, Sequelize) => {
           defaultValue: "Unspecified",
           values: ["Male","Female","Unspecified"],
         },
+        bio: Sequelize.TEXT,
         image_url: Sequelize.STRING,
+        cover_image_url: Sequelize.STRING,
         date_of_birth: Sequelize.DATEONLY,
         role: {
           type: Sequelize.ENUM,
@@ -32,6 +34,10 @@ module.exports = (sequelize, Sequelize) => {
           allowNull: false,
           defaultValue: "Waiting",
           values: ["Confirmed","Waiting"],
+        },
+        is_listener: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: false,
         },
         is_delete: {
           type: Sequelize.BOOLEAN,
