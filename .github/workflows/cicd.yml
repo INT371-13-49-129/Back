@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: appleboy/ssh-action@master
         with:
-          host: "52.141.58.2"  # ${{ secrets.HOSTNAME }}
+          host: "20.2.208.26"  # ${{ secrets.HOSTNAME }}
           username: "Int_372_admin" # ${{ secrets.USERNAME }}
           password: Int_372_admin # ${{ secrets.PASSWORD }}
           script: |
