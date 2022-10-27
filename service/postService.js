@@ -188,6 +188,9 @@ function post_include(account_id = null) {
         "post_status",
         "publish_status",
         "createdAt",
+        "cover_image_url",
+        "owner",
+        "title",
       ],
       include: [
         {
@@ -268,6 +271,14 @@ function post_include(account_id = null) {
       },
       attributes: ["log_edit_id", "log_data", "createdAt"],
     },
+    {
+      model: tag,
+      required: false,
+      where: {
+        is_delete: false,
+      },
+      attributes: ["tag_id", "tag_type", "name"],
+    },
   ];
 }
 
@@ -316,6 +327,9 @@ exports.getPostByPostId = (post_id, account_id = null) => {
         "publish_status",
         "createdAt",
         "updatedAt",
+        "cover_image_url",
+        "owner",
+        "title",
       ],
       include: post_include(account_id),
     });
@@ -347,6 +361,9 @@ exports.getAllPost = (account_id = null) => {
         "publish_status",
         "createdAt",
         "updatedAt",
+        "cover_image_url",
+        "owner",
+        "title",
       ],
       include: post_include(account_id),
     });
@@ -378,6 +395,9 @@ exports.getAllPostAccountPagination = (
         "publish_status",
         "createdAt",
         "updatedAt",
+        "cover_image_url",
+        "owner",
+        "title",
       ],
       include: post_include(my_account_id),
       limit: limit,
@@ -413,6 +433,9 @@ exports.getAllPostPagination = (limit, offset, account_id = null) => {
         "publish_status",
         "createdAt",
         "updatedAt",
+        "cover_image_url",
+        "owner",
+        "title",
       ],
       include: post_include(account_id),
       limit: limit,
@@ -442,6 +465,9 @@ exports.getAllMyPost = (account_id) => {
         "publish_status",
         "createdAt",
         "updatedAt",
+        "cover_image_url",
+        "owner",
+        "title",
       ],
       include: post_include(account_id),
     });
@@ -467,6 +493,9 @@ exports.getAllMyPostPagination = (account_id, limit, offset) => {
         "publish_status",
         "createdAt",
         "updatedAt",
+        "cover_image_url",
+        "owner",
+        "title",
       ],
       include: post_include(account_id),
       limit: limit,
@@ -503,6 +532,9 @@ exports.getAllRepost = (refer_post_id, account_id = null) => {
         "publish_status",
         "createdAt",
         "updatedAt",
+        "cover_image_url",
+        "owner",
+        "title",
       ],
       include: post_include(account_id),
     });

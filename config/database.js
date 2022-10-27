@@ -211,4 +211,11 @@ db.mood.hasMany(db.mood_diary, {
 db.mood_diary.belongsTo(db.mood, {
   foreignKey: "mood_id",
 });
+
+db.tag.hasMany(db.post, {
+  foreignKey: "tag_id",
+});
+db.post.belongsTo(db.tag, {
+  foreignKey: "tag_id",
+});
 module.exports = db;

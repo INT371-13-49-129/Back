@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
         name: Sequelize.STRING,
         tag_type: {
           type: Sequelize.ENUM,
-          values: ["Feeling","Category"],
+          values: ["Feeling","Category","Article"],
         },
         is_delete: {
           type: Sequelize.BOOLEAN,

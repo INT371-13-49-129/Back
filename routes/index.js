@@ -27,6 +27,7 @@ router.put("/member/requestPsychologist",auth , accountController.requestPsychol
 router.put("/member/approveRequestPsychologist", accountController.approveRequestPsychologist);
 
 router.post("/member/createPost",auth ,postController.createPost);
+router.post("/member/createPostArticle",auth ,postController.createPostArticle);
 router.get("/member/getPost/:post_id",checkLogin , postController.getPost);
 router.get("/member/getAllPost",checkLogin, postController.getAllPost);
 router.get("/member/getAllPostAccountPage/:account_id",checkLogin , postController.getAllPostAccountPagination);
