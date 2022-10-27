@@ -8,6 +8,7 @@ module.exports = (sequelize, Sequelize) => {
           autoIncrement: true,
         },
         text: Sequelize.TEXT,
+        image_url: Sequelize.STRING,
         is_read: {
           type: Sequelize.BOOLEAN,
           defaultValue: false,

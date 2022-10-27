@@ -17,6 +17,10 @@ module.exports.statusCode = function (code) {
 
     5001: "MESSAGE_CONNECT_ALREADY_EXISTS",
     5002: "MESSAGE_CONNECT_DOES_NOT_EXIST",
+
+    6001: "DIARY_DOES_NOT_EXIST",
+
+    7001: "MOOD_DIARY_DOES_NOT_EXIST",
   };
   Object.freeze(status_code);
   return status_code[code];

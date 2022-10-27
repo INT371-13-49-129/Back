@@ -1,10 +1,10 @@
-const topicService = require("../service/topicService");
+const moodService = require("../service/moodService");
 const { statusCode, errorResponse } = require("../utils/errorResponse");
 
-exports.createTopic = async (req, res) => {
-    const { name } = req.body;
+exports.createMood = async (req, res) => {
+    const { name, mood_level, icon, color } = req.body;
     try {
-      const topic = await topicService.createTopic({ name });
+      const mood = await moodService.createMood({ name, mood_level, icon, color });
       res.status(200).send({
         status: "success",
       });
@@ -18,12 +18,12 @@ exports.createTopic = async (req, res) => {
     }
 };
 
-exports.getAllTopic = async (req, res) => {
+exports.getAllMood = async (req, res) => {
     try {
-      const topics = await topicService.getAllTopic();
+      const moods = await moodService.getAllMood();
       res.status(200).send({
         status: "success",
-        topics
+        moods
       });
     } catch (error) {
       console.log(error);

@@ -180,6 +180,8 @@ exports.loginMember = async (req, res) => {
           account_topics: user.account_topics,
           createdAt: user.createdAt,
           countPost: user.posts.length,
+          name: user.name,
+          role: user.role,
         },
       });
     } else {
@@ -217,6 +219,8 @@ exports.getAccount = async (req, res) => {
         account_topics: user.account_topics,
         createdAt: user.createdAt,
         countPost: user.posts.length,
+        name: user.name,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -246,6 +250,8 @@ exports.getAccountByAccountId = async (req, res) => {
         account_topics: user.account_topics,
         createdAt: user.createdAt,
         countPost: user.posts.length,
+        name: user.name,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -298,6 +304,7 @@ exports.updateAccountProfile = async (req, res) => {
   const { account_id } = req.jwt;
   const {
     username,
+    name,
     gender,
     bio,
     date_of_birth,
@@ -324,6 +331,7 @@ exports.updateAccountProfile = async (req, res) => {
     }
     const account_update = {
       username,
+      name,
       gender,
       bio,
       date_of_birth,
@@ -334,7 +342,11 @@ exports.updateAccountProfile = async (req, res) => {
     await accountService.updateAccount(account_id, account_update);
     for (let i = 0; i < account.account_topics.length; i++) {
       const { account_topic_id } = account.account_topics[i];
-      if (!account_topics.map((at) => at.account_topic_id).includes(account_topic_id)) {
+      if (
+        !account_topics
+          .map((at) => at.account_topic_id)
+          .includes(account_topic_id)
+      ) {
         await accountTopicService.updateAccountTopic(account_topic_id, {
           is_delete: true,
         });
@@ -348,7 +360,7 @@ exports.updateAccountProfile = async (req, res) => {
         account_id,
       });
     }
-    const log_data ={
+    const log_data = {
       username: account.username,
       gender: account.gender,
       bio: account.bio,
@@ -358,8 +370,68 @@ exports.updateAccountProfile = async (req, res) => {
       is_listener: account.is_listener,
       account_topics: account.account_topics,
       countPost: account.posts.length,
-    }
-    await logEditService.createLogEdit({ account_id , log_data});
+      name: account.name,
+      role: account.role,
+    };
+    await logEditService.createLogEdit({ account_id, log_data });
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.requestPsychologist = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { file_approve,name } = req.body;
+  try {
+    const account = await accountService.getAccountByAccountId(account_id);
+    if (!account)
+      return errorResponse(res, {
+        statusResponse: 404,
+        statusCode: statusCode(2003),
+        errorMessage: `Account Id(${account_id}) Does not exist`,
+      });
+    const account_update = {
+      file_approve,
+      name,
+      approve: "Waiting",
+    };
+    await accountService.updateAccount(account_id, account_update);
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.approveRequestPsychologist = async (req, res) => {
+  const { account_id } = req.body;
+  try {
+    const account = await accountService.getAccountByAccountId(account_id);
+    if (!account)
+      return errorResponse(res, {
+        statusResponse: 404,
+        statusCode: statusCode(2003),
+        errorMessage: `Account Id(${account_id}) Does not exist`,
+      });
+    const account_update = {
+      approve: "Approve",
+      role: "Psychologist"
+    };
+    await accountService.updateAccount(account_id, account_update);
     res.status(200).send({
       status: "success",
     });

@@ -8,6 +8,7 @@ module.exports = (sequelize, Sequelize) => {
           autoIncrement: true,
         },
         text: Sequelize.TEXT,
+        img: Sequelize.JSON,
         post_type: {
           type: Sequelize.ENUM,
           allowNull: false,

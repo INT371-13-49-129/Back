@@ -44,7 +44,7 @@ exports.getAccountByAccountId = (account_id) => {
         account_id: account_id,
         is_delete: false,
       },
-      include:[
+      include: [
         {
           model: account_topic,
           required: false,
@@ -70,7 +70,7 @@ exports.getAccountByAccountId = (account_id) => {
           },
           attributes: ["post_id"],
         },
-      ]
+      ],
     });
   } catch (error) {
     throw error;
@@ -96,8 +96,8 @@ exports.getAllAccount = () => {
       where: {
         is_delete: false,
       },
-      attributes: ["account_id", "username", "image_url"],
-      include:[
+      attributes: ["account_id", "username", "name", "role", "image_url"],
+      include: [
         {
           model: account_topic,
           required: false,
@@ -115,7 +115,7 @@ exports.getAllAccount = () => {
             },
           ],
         },
-      ]
+      ],
     });
   } catch (error) {
     throw error;
