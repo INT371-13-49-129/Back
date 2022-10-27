@@ -35,6 +35,39 @@ exports.createPost = async (req, res) => {
   }
 };
 
+exports.createPostArticle = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { text, tag_id, cover_image_url, img, owner, title } = req.body;
+  try {
+    const account = await accountService.getAccountByAccountId(account_id);
+    if (account.role != "Psychologist")
+      return errorResponse(res, {
+        statusResponse: 401,
+        statusCode: statusCode(2007),
+        errorMessage: `Account Id(${account_id}) don't have permission to create Article post.`,
+      });
+    const post = await postService.createPost({
+      account_id,
+      text,
+      tag_id,
+      cover_image_url,
+      img,
+      owner,
+      title,
+    });
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
 exports.getPost = async (req, res) => {
   const { post_id } = req.params;
   const { account_id = null } = req.jwt;

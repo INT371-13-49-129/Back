@@ -7,8 +7,11 @@ module.exports = (sequelize, Sequelize) => {
           primaryKey: true,
           autoIncrement: true,
         },
+        title: Sequelize.STRING,
+        owner: Sequelize.STRING,
         text: Sequelize.TEXT,
         img: Sequelize.JSON,
+        cover_image_url: Sequelize.STRING,
         post_type: {
           type: Sequelize.ENUM,
           allowNull: false,
