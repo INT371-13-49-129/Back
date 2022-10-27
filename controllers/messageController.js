@@ -84,9 +84,61 @@ exports.getMessageConnect = async (req, res) => {
   }
 };
 
+exports.getMessageConnectPagination = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { account_id_2 } = req.params;
+  let { limit = 20, page = 1 } = req.query;
+  limit = parseInt(limit);
+  page = parseInt(page);
+  let offset = page === 1 ? 0 : (page - 1) * limit;
+  try {
+    const account = await accountService.getAccountByAccountId(account_id_2);
+    if (!account)
+      return errorResponse(res, {
+        statusResponse: 404,
+        statusCode: statusCode(2003),
+        errorMessage: `Account Id(${account_id_2}) Does not exist`,
+      });
+    let messageConnect =
+      await messageConnectService.getMessageConnectByAccountId1AndAccountId2Pagination(
+        {
+          account_id_1: account_id,
+          account_id_2,
+          limit,
+          offset,
+        }
+      );
+    if (!messageConnect) {
+      await messageConnectService.createMessageConnect({
+        account_id_1: account_id,
+        account_id_2,
+      });
+      messageConnect =
+        await messageConnectService.getMessageConnectByAccountId1AndAccountId2Pagination(
+          {
+            account_id_1: account_id,
+            account_id_2,
+            limit,
+            offset,
+          }
+        );
+    }
+    res.status(200).send({
+      messageConnect,
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
 exports.createMessage = async (req, res) => {
   const { account_id } = req.jwt;
-  const { account_id_2, message_connect_id, text } = req.body;
+  const { account_id_2, message_connect_id, text, image_url } = req.body;
   try {
     const account = await accountService.getAccountByAccountId(account_id_2);
     if (!account)
@@ -127,13 +179,14 @@ exports.createMessage = async (req, res) => {
       message_connect_id,
       account_id,
       text,
+      image_url,
     });
     await messageConnectService.updateMessageConnect(message_connect_id, {
       last_messages: sequelize.fn("NOW"),
     });
-    res.io.emit("message_connect_id_" + message_connect_id, message_connect_id )
-    res.io.emit("message_account_id_" + account_id, account_id )
-    res.io.emit("message_account_id_" + account_id_2, account_id_2 )
+    res.io.emit("message_connect_id_" + message_connect_id, message_connect_id);
+    res.io.emit("message_account_id_" + account_id, account_id);
+    res.io.emit("message_account_id_" + account_id_2, account_id_2);
     res.status(200).send({
       status: "success",
     });
@@ -180,7 +233,7 @@ exports.readMessage = async (req, res) => {
       await messageService.updateMessage(message_id, {
         is_read: true,
       });
-      res.io.emit("message_account_id_" + account_id, account_id )
+      res.io.emit("message_account_id_" + account_id, account_id);
     }
     res.status(200).send({
       status: "success",

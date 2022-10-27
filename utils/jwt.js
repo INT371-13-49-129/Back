@@ -55,6 +55,30 @@ module.exports.auth = async function (req, res, next) {
   });
 };
 
+module.exports.checkLogin = async function (req, res, next) {
+  const token = req.headers.authorization;
+  req.jwt = {};
+  req.token = "";
+  if (!token) return next();
+  jwt.verify(token.split(" ")[1], TOKEN_SECRET, async function (err, decoded) {
+    if (err) return next();
+    if (decoded) {
+      const jwtLogout =
+        await jsonWebTokenService.getJsonWebTokenByTokenAndTokenTypeAndAccountId(
+          {
+            token: token.split(" ")[1],
+            token_type: "Logout",
+            account_id: decoded.account_id,
+          }
+        );
+      if (jwtLogout) return next();
+      req.jwt = decoded;
+      req.token = token.split(" ")[1];
+      next();
+    }
+  });
+};
+
 module.exports.verify = async function (res, token) {
   if (!token)
     return errorResponse(res, {

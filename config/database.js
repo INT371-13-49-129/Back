@@ -43,6 +43,9 @@ db.message_connect = require("../models/messageConnect")(sequelize, Sequelize);
 db.message = require("../models/message")(sequelize, Sequelize);
 db.topic = require("../models/topic")(sequelize, Sequelize);
 db.account_topic = require("../models/accountTopic")(sequelize, Sequelize);
+db.diary = require("../models/diary")(sequelize, Sequelize);
+db.mood = require("../models/mood")(sequelize, Sequelize);
+db.mood_diary = require("../models/moodDiary")(sequelize, Sequelize);
 
 db.account.hasMany(db.json_web_token, {
   foreignKey: "account_id",
@@ -188,4 +191,24 @@ db.account_topic.belongsTo(db.topic, {
   foreignKey: "topic_id",
 });
 
+db.account.hasMany(db.diary, {
+  foreignKey: "account_id",
+});
+db.diary.belongsTo(db.account, {
+  foreignKey: "account_id",
+});
+
+db.account.hasMany(db.mood_diary, {
+  foreignKey: "account_id",
+});
+db.mood_diary.belongsTo(db.account, {
+  foreignKey: "account_id",
+});
+
+db.mood.hasMany(db.mood_diary, {
+  foreignKey: "mood_id",
+});
+db.mood_diary.belongsTo(db.mood, {
+  foreignKey: "mood_id",
+});
 module.exports = db;

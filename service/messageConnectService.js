@@ -58,7 +58,7 @@ exports.getMessageConnectByAccountId1AndAccountId2 = (payload) => {
           where: {
             is_delete: false,
           },
-          attributes: ["account_id", "username", "image_url"],
+          attributes: ["account_id", "username", "name", "role", "image_url"],
         },
         {
           model: account,
@@ -67,7 +67,7 @@ exports.getMessageConnectByAccountId1AndAccountId2 = (payload) => {
           where: {
             is_delete: false,
           },
-          attributes: ["account_id", "username", "image_url"],
+          attributes: ["account_id", "username", "name", "role", "image_url"],
         },
         {
           model: message,
@@ -80,10 +80,83 @@ exports.getMessageConnectByAccountId1AndAccountId2 = (payload) => {
             "account_id",
             "is_read",
             "text",
+            "image_url",
             "createdAt",
             "updatedAt",
           ],
           order: [["message_id", "DESC"]],
+        },
+      ],
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+
+exports.getMessageConnectByAccountId1AndAccountId2Pagination = (payload) => {
+  try {
+    return message_connect.findOne({
+      where: {
+        is_delete: false,
+        [Op.or]: [
+          {
+            [Op.and]: [
+              { account_id_1: payload.account_id_1 },
+              { account_id_2: payload.account_id_2 },
+            ],
+          },
+          {
+            [Op.and]: [
+              { account_id_1: payload.account_id_2 },
+              { account_id_2: payload.account_id_1 },
+            ],
+          },
+        ],
+      },
+      attributes: [
+        "message_connect_id",
+        "last_messages",
+        "createdAt",
+        "updatedAt",
+      ],
+      include: [
+        {
+          model: account,
+          as: "account_1",
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["account_id", "username", "name", "role", "image_url"],
+        },
+        {
+          model: account,
+          as: "account_2",
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["account_id", "username", "name", "role", "image_url"],
+        },
+        {
+          model: message,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: [
+            "message_id",
+            "account_id",
+            "is_read",
+            "text",
+            "image_url",
+            "createdAt",
+            "updatedAt",
+          ],
+          limit: payload.limit,
+          offset: payload.offset,
+          distinct: true,
+          order: [["createdAt", "DESC"]],
         },
       ],
     });
@@ -113,7 +186,7 @@ exports.getMessageConnectByMessageConnectId = (message_connect_id) => {
           where: {
             is_delete: false,
           },
-          attributes: ["account_id", "username", "image_url"],
+          attributes: ["account_id", "username", "name", "role", "image_url"],
         },
         {
           model: account,
@@ -122,7 +195,7 @@ exports.getMessageConnectByMessageConnectId = (message_connect_id) => {
           where: {
             is_delete: false,
           },
-          attributes: ["account_id", "username", "image_url"],
+          attributes: ["account_id", "username", "name", "role", "image_url"],
         },
         {
           model: message,
@@ -135,6 +208,7 @@ exports.getMessageConnectByMessageConnectId = (message_connect_id) => {
             "account_id",
             "is_read",
             "text",
+            "image_url",
             "createdAt",
             "updatedAt",
           ],
@@ -168,7 +242,7 @@ exports.getAllMessageConnectByAccountId = (account_id) => {
           where: {
             is_delete: false,
           },
-          attributes: ["account_id", "username", "image_url"],
+          attributes: ["account_id", "username", "name", "role", "image_url"],
         },
         {
           model: account,
@@ -177,7 +251,7 @@ exports.getAllMessageConnectByAccountId = (account_id) => {
           where: {
             is_delete: false,
           },
-          attributes: ["account_id", "username", "image_url"],
+          attributes: ["account_id", "username", "name", "role", "image_url"],
         },
         {
           model: message,
@@ -190,11 +264,12 @@ exports.getAllMessageConnectByAccountId = (account_id) => {
             "account_id",
             "is_read",
             "text",
+            "image_url",
             "createdAt",
             "updatedAt",
           ],
           limit: 3,
-          order: [["message_id", "DESC"]],
+          order: [["createdAt", "DESC"]],
         },
       ],
     });
