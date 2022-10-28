@@ -54,6 +54,7 @@ exports.createPostArticle = async (req, res) => {
       img,
       owner,
       title,
+      post_type: "Article",
     });
     res.status(200).send({
       status: "success",
