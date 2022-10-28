@@ -96,7 +96,7 @@ exports.getAllAccount = () => {
       where: {
         is_delete: false,
       },
-      attributes: ["account_id", "username", "name", "role", "image_url"],
+      attributes: ["account_id", "username", "name", "role", "image_url", "is_listener"],
       include: [
         {
           model: account_topic,
