@@ -4,7 +4,7 @@ const database = require("../config/database");
 const { post, account, comment, post_tag, tag, emotion, log_edit, sequelize } =
   database;
 
-function post_include(account_id = null) {
+function post_include(account_id = null, tag_id = []) {
   return [
     {
       model: account,
@@ -150,6 +150,28 @@ function post_include(account_id = null) {
     },
     {
       model: post_tag,
+      as: "tag_filter",
+      required: tag_id.length > 0,
+      where: {
+        is_delete: false,
+        tag_id: {
+          [Op.in]: tag_id,
+        },
+      },
+      attributes: ["post_tag_id"],
+      include: [
+        {
+          model: tag,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["tag_id", "tag_type", "name"],
+        },
+      ],
+    },
+    {
+      model: post_tag,
       required: false,
       where: {
         is_delete: false,
@@ -189,6 +211,7 @@ function post_include(account_id = null) {
         "publish_status",
         "createdAt",
         "cover_image_url",
+        "count_read",
         "owner",
         "title",
       ],
@@ -251,6 +274,14 @@ function post_include(account_id = null) {
             is_delete: false,
           },
           attributes: ["log_edit_id", "log_data", "createdAt"],
+        },
+        {
+          model: tag,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["tag_id", "tag_type", "name"],
         },
       ],
     },
@@ -328,6 +359,7 @@ exports.getPostByPostId = (post_id, account_id = null) => {
         "createdAt",
         "updatedAt",
         "cover_image_url",
+        "count_read",
         "owner",
         "title",
       ],
@@ -362,6 +394,7 @@ exports.getAllPost = (account_id = null) => {
         "createdAt",
         "updatedAt",
         "cover_image_url",
+        "count_read",
         "owner",
         "title",
       ],
@@ -376,7 +409,8 @@ exports.getAllPostAccountPagination = (
   account_id,
   limit,
   offset,
-  my_account_id = null
+  my_account_id = null,
+  post_type = "Post"
 ) => {
   try {
     return post.findAndCountAll({
@@ -384,6 +418,7 @@ exports.getAllPostAccountPagination = (
         is_delete: false,
         account_id: account_id,
         publish_status: "Publish",
+        post_type,
       },
       attributes: [
         "post_id",
@@ -396,6 +431,7 @@ exports.getAllPostAccountPagination = (
         "createdAt",
         "updatedAt",
         "cover_image_url",
+        "count_read",
         "owner",
         "title",
       ],
@@ -410,7 +446,13 @@ exports.getAllPostAccountPagination = (
   }
 };
 
-exports.getAllPostPagination = (limit, offset, account_id = null) => {
+exports.getAllPostPagination = (
+  limit,
+  offset,
+  account_id = null,
+  post_type = "Post",
+  order_count_read = false
+) => {
   try {
     return post.findAndCountAll({
       where: {
@@ -422,6 +464,7 @@ exports.getAllPostPagination = (limit, offset, account_id = null) => {
             publish_status: "Publish",
           },
         ],
+        post_type,
       },
       attributes: [
         "post_id",
@@ -434,6 +477,161 @@ exports.getAllPostPagination = (limit, offset, account_id = null) => {
         "createdAt",
         "updatedAt",
         "cover_image_url",
+        "count_read",
+        "owner",
+        "title",
+      ],
+      include: post_include(account_id),
+      limit: limit,
+      offset: offset,
+      distinct: true,
+      order: order_count_read
+        ? [
+            ["count_read", "DESC"],
+            ["createdAt", "DESC"],
+          ]
+        : [["createdAt", "DESC"]],
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getAllPostByPostTagAndSearchPagination = (
+  limit,
+  offset,
+  account_id = null,
+  post_type = "Post",
+  tag_id = [],
+  search = "",
+  follow = false,
+  account_follows_id = []
+) => {
+  try {
+    return post.findAndCountAll({
+      where: {
+        is_delete: false,
+        ...((follow && account_id) && {
+          account_id: {
+            [Op.in]: account_follows_id,
+          },
+        }),
+        [Op.and]: [
+          {
+            [Op.or]: [
+              { account_id: account_id },
+              ,
+              {
+                publish_status: "Publish",
+              },
+            ],
+          },
+          {
+            [Op.or]: [
+              {
+                title: {
+                  [Op.like]: `%${search}%`,
+                },
+              },
+              {
+                text: {
+                  [Op.like]: `%${search}%`,
+                },
+              },
+            ],
+          },
+        ],
+        post_type,
+      },
+      attributes: [
+        "post_id",
+        "refer_post_id",
+        "text",
+        "img",
+        "post_type",
+        "post_status",
+        "publish_status",
+        "createdAt",
+        "updatedAt",
+        "cover_image_url",
+        "count_read",
+        "owner",
+        "title",
+      ],
+      include: post_include(account_id, tag_id),
+      limit: limit,
+      offset: offset,
+      distinct: true,
+      order: [["createdAt", "DESC"]],
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getAllPostByTagIdAndSearchPagination = (
+  limit,
+  offset,
+  account_id = null,
+  post_type = "Article",
+  tag_id = [],
+  search = "",
+  follow = false,
+  account_follows_id = []
+) => {
+  try {
+    return post.findAndCountAll({
+      where: {
+        is_delete: false,
+        ...(tag_id.length > 0 && {
+          tag_id: {
+            [Op.in]: tag_id,
+          },
+        }),
+        ...((follow && account_id) && {
+          account_id: {
+            [Op.in]: account_follows_id,
+          },
+        }),
+        [Op.and]: [
+          {
+            [Op.or]: [
+              { account_id: account_id },
+              ,
+              {
+                publish_status: "Publish",
+              },
+            ],
+          },
+          {
+            [Op.or]: [
+              {
+                title: {
+                  [Op.like]: `%${search}%`,
+                },
+              },
+              {
+                text: {
+                  [Op.like]: `%${search}%`,
+                },
+              },
+            ],
+          },
+        ],
+        post_type,
+      },
+      attributes: [
+        "post_id",
+        "refer_post_id",
+        "text",
+        "img",
+        "post_type",
+        "post_status",
+        "publish_status",
+        "createdAt",
+        "updatedAt",
+        "cover_image_url",
+        "count_read",
         "owner",
         "title",
       ],
@@ -466,6 +664,7 @@ exports.getAllMyPost = (account_id) => {
         "createdAt",
         "updatedAt",
         "cover_image_url",
+        "count_read",
         "owner",
         "title",
       ],
@@ -476,12 +675,18 @@ exports.getAllMyPost = (account_id) => {
   }
 };
 
-exports.getAllMyPostPagination = (account_id, limit, offset) => {
+exports.getAllMyPostPagination = (
+  account_id,
+  limit,
+  offset,
+  post_type = "Post"
+) => {
   try {
     return post.findAndCountAll({
       where: {
         is_delete: false,
         account_id,
+        post_type,
       },
       attributes: [
         "post_id",
@@ -494,6 +699,7 @@ exports.getAllMyPostPagination = (account_id, limit, offset) => {
         "createdAt",
         "updatedAt",
         "cover_image_url",
+        "count_read",
         "owner",
         "title",
       ],
@@ -533,6 +739,7 @@ exports.getAllRepost = (refer_post_id, account_id = null) => {
         "createdAt",
         "updatedAt",
         "cover_image_url",
+        "count_read",
         "owner",
         "title",
       ],

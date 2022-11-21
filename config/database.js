@@ -46,6 +46,12 @@ db.account_topic = require("../models/accountTopic")(sequelize, Sequelize);
 db.diary = require("../models/diary")(sequelize, Sequelize);
 db.mood = require("../models/mood")(sequelize, Sequelize);
 db.mood_diary = require("../models/moodDiary")(sequelize, Sequelize);
+db.rating = require("../models/rating")(sequelize, Sequelize);
+db.follow = require("../models/follow")(sequelize, Sequelize);
+db.report = require("../models/report")(sequelize, Sequelize);
+db.notification = require("../models/notification")(sequelize, Sequelize);
+db.account_read = require("../models/accountRead")(sequelize, Sequelize);
+db.request = require("../models/request")(sequelize, Sequelize);
 
 db.account.hasMany(db.json_web_token, {
   foreignKey: "account_id",
@@ -91,6 +97,10 @@ db.comment.belongsTo(db.comment, {
   foreignKey: "reply_comment_id",
 });
 
+db.post.hasMany(db.post_tag, {
+  foreignKey: "post_id",
+  as:"tag_filter",
+});
 db.post.hasMany(db.post_tag, {
   foreignKey: "post_id",
 });
@@ -218,4 +228,114 @@ db.tag.hasMany(db.post, {
 db.post.belongsTo(db.tag, {
   foreignKey: "tag_id",
 });
+
+db.account.hasMany(db.rating, {
+  as: 'account_reviewer',
+  foreignKey: "account_id",
+});
+db.rating.belongsTo(db.account, {
+  foreignKey: "account_id",
+});
+db.account.hasMany(db.rating, {
+  foreignKey: "account_id_reviewer",
+});
+db.rating.belongsTo(db.account, {
+  as: 'account_reviewer',
+  foreignKey: "account_id_reviewer",
+});
+
+
+db.account.hasMany(db.follow, {
+  as: "account_follower",
+  foreignKey: "account_id",
+});
+db.follow.belongsTo(db.account, {
+  foreignKey: "account_id",
+});
+db.account.hasMany(db.follow, {
+  foreignKey: "account_id_follower",
+});
+db.follow.belongsTo(db.account, {
+  as: 'account_follower',
+  foreignKey: "account_id_follower",
+});
+
+db.post.hasMany(db.report, {
+  foreignKey: "post_id",
+});
+db.report.belongsTo(db.post, {
+  foreignKey: "post_id",
+});
+
+db.comment.hasMany(db.report, {
+  foreignKey: "comment_id",
+});
+db.report.belongsTo(db.comment, {
+  foreignKey: "comment_id",
+});
+
+db.account.hasMany(db.report, {
+  foreignKey: "account_id",
+});
+db.report.belongsTo(db.account, {
+  foreignKey: "account_id",
+});
+
+db.account.hasMany(db.report, {
+  foreignKey: "account_id_reporter",
+});
+db.report.belongsTo(db.account, {
+  as: 'account_reporter',
+  foreignKey: "account_id_reporter",
+});
+
+db.post.hasMany(db.notification, {
+  foreignKey: "post_id",
+});
+db.notification.belongsTo(db.post, {
+  foreignKey: "post_id",
+});
+
+db.comment.hasMany(db.notification, {
+  foreignKey: "comment_id",
+});
+db.notification.belongsTo(db.comment, {
+  foreignKey: "comment_id",
+});
+
+db.account.hasMany(db.notification, {
+  foreignKey: "account_id",
+});
+db.notification.belongsTo(db.account, {
+  foreignKey: "account_id",
+});
+
+db.account.hasMany(db.account_read, {
+  foreignKey: "account_id",
+});
+db.account_read.belongsTo(db.account, {
+  foreignKey: "account_id",
+});
+
+db.post.hasMany(db.account_read, {
+  foreignKey: "post_id",
+});
+db.account_read.belongsTo(db.post, {
+  foreignKey: "post_id",
+});
+
+db.account.hasMany(db.request, {
+  foreignKey: "account_id",
+});
+db.request.belongsTo(db.account, {
+  foreignKey: "account_id",
+});
+
+db.message_connect.hasMany(db.request, {
+  foreignKey: "message_connect_id",
+});
+db.request.belongsTo(db.message_connect, {
+  foreignKey: "message_connect_id",
+});
+
 module.exports = db;

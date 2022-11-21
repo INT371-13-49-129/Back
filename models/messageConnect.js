@@ -11,6 +11,12 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.DATE,
             defaultValue: Sequelize.NOW
          },
+        message_connect_status: {
+          type: Sequelize.ENUM,
+          values: ["active", "inactive", "block", "waiting"],
+          defaultValue: "inactive",
+        },  
+
         is_delete: {
           type: Sequelize.BOOLEAN,
           defaultValue: false,

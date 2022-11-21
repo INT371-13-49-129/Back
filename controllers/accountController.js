@@ -179,9 +179,14 @@ exports.loginMember = async (req, res) => {
           is_listener: user.is_listener,
           account_topics: user.account_topics,
           createdAt: user.createdAt,
-          countPost: user.posts.length,
+          countPost: user.posts.filter((post) => post.post_type == "Post").length,
+          countPostArticle: user.posts.filter((post) => post.post_type == "Article").length,
           name: user.name,
           role: user.role,
+          account_follower: user.account_follower,
+          follows: user.follows,
+          account_reviewer: user.account_reviewer,
+          avgRatings: user.account_reviewer.length > 0 ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) / user.account_reviewer.length : 0,
         },
       });
     } else {
@@ -218,9 +223,14 @@ exports.getAccount = async (req, res) => {
         is_listener: user.is_listener,
         account_topics: user.account_topics,
         createdAt: user.createdAt,
-        countPost: user.posts.length,
+        countPost: user.posts.filter((post) => post.post_type == "Post").length,
+        countPostArticle: user.posts.filter((post) => post.post_type == "Article").length,
         name: user.name,
         role: user.role,
+        account_follower: user.account_follower,
+        follows: user.follows,
+        account_reviewer: user.account_reviewer,
+        avgRatings: user.account_reviewer.length > 0 ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) / user.account_reviewer.length : 0,
       },
     });
   } catch (error) {
@@ -245,13 +255,17 @@ exports.getAccountByAccountId = async (req, res) => {
         bio: user.bio,
         image_url: user.image_url,
         cover_image_url: user.cover_image_url,
-        date_of_birth: user.date_of_birth,
         is_listener: user.is_listener,
         account_topics: user.account_topics,
         createdAt: user.createdAt,
-        countPost: user.posts.length,
+        countPost: user.posts.filter((post) => post.post_type == "Post").length,
+        countPostArticle: user.posts.filter((post) => post.post_type == "Article").length,
         name: user.name,
         role: user.role,
+        account_follower: user.account_follower,
+        follows: user.follows,
+        account_reviewer: user.account_reviewer,
+        avgRatings: user.account_reviewer.length > 0 ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) / user.account_reviewer.length : 0,
       },
     });
   } catch (error) {
@@ -369,9 +383,14 @@ exports.updateAccountProfile = async (req, res) => {
       date_of_birth: account.date_of_birth,
       is_listener: account.is_listener,
       account_topics: account.account_topics,
-      countPost: account.posts.length,
+      countPost: account.posts.filter((post) => post.post_type == "Post").length,
+      countPostArticle: account.posts.filter((post) => post.post_type == "Article").length,
       name: account.name,
       role: account.role,
+      account_follower: account.account_follower,
+      follows: account.follows,
+      account_reviewer: account.account_reviewer,
+      avgRatings: account.account_reviewer.length > 0 ? account.account_reviewer.reduce((a, b) => a + b.rating_score, 0) / account.account_reviewer.length : 0,
     };
     await logEditService.createLogEdit({ account_id, log_data });
     res.status(200).send({
@@ -389,7 +408,7 @@ exports.updateAccountProfile = async (req, res) => {
 
 exports.requestPsychologist = async (req, res) => {
   const { account_id } = req.jwt;
-  const { file_approve,name } = req.body;
+  const { file_approve, name } = req.body;
   try {
     const account = await accountService.getAccountByAccountId(account_id);
     if (!account)
@@ -429,7 +448,7 @@ exports.approveRequestPsychologist = async (req, res) => {
       });
     const account_update = {
       approve: "Approve",
-      role: "Psychologist"
+      role: "Psychologist",
     };
     await accountService.updateAccount(account_id, account_update);
     res.status(200).send({
