@@ -17,10 +17,16 @@ module.exports.statusCode = function (code) {
 
     5001: "MESSAGE_CONNECT_ALREADY_EXISTS",
     5002: "MESSAGE_CONNECT_DOES_NOT_EXIST",
+    5003: "MESSAGE_CONNECT_STATUS_INCORRECT",
+    5004: "MESSAGE_CONNECT_UNAUTHORIZED",
 
     6001: "DIARY_DOES_NOT_EXIST",
 
     7001: "MOOD_DIARY_DOES_NOT_EXIST",
+
+    8001: "FOLLOW_DOES_NOT_EXIST",
+
+    9001: "RATING_SCORE_SHOULD_BE_BETWEEN_1_AND_5",
   };
   Object.freeze(status_code);
   return status_code[code];

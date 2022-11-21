@@ -1,8 +1,10 @@
 const messageService = require("../service/messageService");
 const messageConnectService = require("../service/messageConnectService");
 const accountService = require("../service/accountService");
+const requestService = require("../service/requestService");
 const { statusCode, errorResponse } = require("../utils/errorResponse");
 const database = require("../config/database");
+const e = require("cors");
 const { sequelize } = database;
 
 exports.createMessageConnect = async (req, res) => {
@@ -175,6 +177,13 @@ exports.createMessage = async (req, res) => {
         statusCode: statusCode(2007),
         errorMessage: `Account Id(${account_id_2}) don't have permission to Create Message Connect Id(${message_connect_id})`,
       });
+    if (messageConnect.message_connect_status != "active") {
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5003),
+        errorMessage: `Message Connect Id(${message_connect_id}) is not active`,
+      });
+    }
     await messageService.createMessage({
       message_connect_id,
       account_id,
@@ -247,3 +256,335 @@ exports.readMessage = async (req, res) => {
     });
   }
 };
+
+exports.createRequest = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { message_connect_id, text } = req.body;
+  try {
+    const messageConnect =
+      await messageConnectService.getMessageConnectByMessageConnectId(
+        message_connect_id
+      );
+    if (!messageConnect)
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5002),
+        errorMessage: `Message Connect Id(${message_connect_id}) Does not exist`,
+      });
+    if (
+      messageConnect.account_id_1 != account_id &&
+      messageConnect.account_id_2 != account_id
+    )
+      return errorResponse(res, {
+        statusResponse: 401,
+        statusCode: statusCode(2007),
+        errorMessage: `Account Id(${account_id}) don't have permission to Create Request Message Connect Id(${message_connect_id})`,
+      });
+    if (messageConnect.message_connect_status == "inactive") {
+      await requestService.createRequest({
+        message_connect_id,
+        account_id,
+        text,
+      });
+    } else if (messageConnect.message_connect_status == "waiting") {
+      const request = await requestService.getRequestByMessageConnectId(
+        messageConnect.message_connect_id
+      );
+      await requestService.updateRequest(request.request_id, {
+        text,
+      });
+    }
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.acceptRequest = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { message_connect_id } = req.body;
+  try {
+    const messageConnect =
+      await messageConnectService.getMessageConnectByMessageConnectId(
+        message_connect_id
+      );
+    if (!messageConnect)
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5002),
+        errorMessage: `Message Connect Id(${message_connect_id}) Does not exist`,
+      });
+    if (
+      messageConnect.account_id_1 != account_id &&
+      messageConnect.account_id_2 != account_id
+    )
+      return errorResponse(res, {
+        statusResponse: 401,
+        statusCode: statusCode(2007),
+        errorMessage: `Account Id(${account_id}) don't have permission to Accept Request Message Connect Id(${message_connect_id})`,
+      });
+    if (messageConnect.message_connect_status != "waiting") {
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5003),
+        errorMessage: `Message Connect Id(${message_connect_id}) is not waiting`,
+      });
+    }
+    if (messageConnect.message_connect_status == "waiting") {
+      await messageConnectService.updateMessageConnect(message_connect_id, {
+        message_connect_status: "active",
+      });
+      const request = await requestService.getRequestByMessageConnectId(
+        messageConnect.message_connect_id
+      );
+      if (request.account_id == account_id) {
+        return errorResponse(res, {
+          statusResponse: 400,
+          statusCode: statusCode(2007),
+          errorMessage: `Account Id(${account_id}) don't have permission to Accept Request Message Connect Id(${message_connect_id})`,
+        });
+      }
+      if (
+        request.account_id != messageConnect.account_id_1 &&
+        request.account_id != messageConnect.account_id_2
+      ) {
+        return errorResponse(res, {
+          statusResponse: 400,
+          statusCode: statusCode(5004),
+          errorMessage: `Request Account Id(${request.account_id}) is not in Message Connect Id(${message_connect_id})`,
+        });
+      }
+      await requestService.updateRequest(request.request_id, {
+        request_status: "Accept",
+      });
+    }
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.rejectRequest = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { message_connect_id } = req.body;
+  try {
+    const messageConnect =
+      await messageConnectService.getMessageConnectByMessageConnectId(
+        message_connect_id
+      );
+    if (!messageConnect)
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5002),
+        errorMessage: `Message Connect Id(${message_connect_id}) Does not exist`,
+      });
+    if (
+      messageConnect.account_id_1 != account_id &&
+      messageConnect.account_id_2 != account_id
+    )
+      return errorResponse(res, {
+        statusResponse: 401,
+        statusCode: statusCode(2007),
+        errorMessage: `Account Id(${account_id}) don't have permission to Reject Request Message Connect Id(${message_connect_id})`,
+      });
+    if (messageConnect.message_connect_status != "waiting") {
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5003),
+        errorMessage: `Message Connect Id(${message_connect_id}) is not waiting`,
+      });
+    }
+    if (messageConnect.message_connect_status == "waiting") {
+      await messageConnectService.updateMessageConnect(message_connect_id, {
+        message_connect_status: "inactive",
+      });
+      const request = await requestService.getRequestByMessageConnectId(
+        messageConnect.message_connect_id
+      );
+      if (request.account_id == account_id) {
+        return errorResponse(res, {
+          statusResponse: 400,
+          statusCode: statusCode(2007),
+          errorMessage: `Account Id(${account_id}) don't have permission to Reject Request Message Connect Id(${message_connect_id})`,
+        });
+      }
+      if (
+        request.account_id != messageConnect.account_id_1 &&
+        request.account_id != messageConnect.account_id_2
+      ) {
+        return errorResponse(res, {
+          statusResponse: 400,
+          statusCode: statusCode(5004),
+          errorMessage: `Request Account Id(${request.account_id}) is not in Message Connect Id(${message_connect_id})`,
+        });
+      }
+      await requestService.updateRequest(request.request_id, {
+        request_status: "Reject",
+      });
+    }
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.activateMessageConnect = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { message_connect_id } = req.body;
+  try {
+    const messageConnect =
+      await messageConnectService.getMessageConnectByMessageConnectId(
+        message_connect_id
+      );
+    if (!messageConnect)
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5002),
+        errorMessage: `Message Connect Id(${message_connect_id}) Does not exist`,
+      });
+    if (
+      messageConnect.account_id_1 != account_id &&
+      messageConnect.account_id_2 != account_id
+    )
+      return errorResponse(res, {
+        statusResponse: 401,
+        statusCode: statusCode(2007),
+        errorMessage: `Account Id(${account_id}) don't have permission to Activate Message Connect Id(${message_connect_id})`,
+      });
+    if (messageConnect.message_connect_status != "inactive") {
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5005),
+        errorMessage: `Message Connect Id(${message_connect_id}) is not inactive`,
+      });
+    }
+    const otherAccount = await accountService.getAccountByAccountId(
+      messageConnect.account_id_1 == account_id
+        ? messageConnect.account_id_2
+        : messageConnect.account_id_1
+    );
+    if (otherAccount.role == "member" && otherAccount.is_listener == false) {
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(2007),
+        errorMessage: `Account Id(${otherAccount.account_id}) is not listener`,
+      });
+    }
+    await messageConnectService.updateMessageConnect(message_connect_id, {
+      message_connect_status: "active",
+    });
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.deactivateMessageConnect = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { message_connect_id } = req.body;
+  try {
+    const messageConnect =
+      await messageConnectService.getMessageConnectByMessageConnectId(
+        message_connect_id
+      );
+    if (!messageConnect)
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5002),
+        errorMessage: `Message Connect Id(${message_connect_id}) Does not exist`,
+      });
+    if (
+      messageConnect.account_id_1 != account_id &&
+      messageConnect.account_id_2 != account_id
+    )
+      return errorResponse(res, {
+        statusResponse: 401,
+        statusCode: statusCode(2007),
+        errorMessage: `Account Id(${account_id}) don't have permission to Deactivate Message Connect Id(${message_connect_id})`,
+      });
+    if (messageConnect.message_connect_status != "active") {
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5006),
+        errorMessage: `Message Connect Id(${message_connect_id}) is not active`,
+      });
+    }
+    await messageConnectService.updateMessageConnect(message_connect_id, {
+      message_connect_status: "inactive",
+    });
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.deactivateAllMessageConnect = async (req, res) => {
+  const { account_id } = req.jwt;
+  try {
+    const messageConnects =
+      await messageConnectService.getAllMessageConnectByAccountId(account_id);
+    for (let i = 0; i < messageConnects.length; i++) {
+      const messageConnect = messageConnects[i];
+      if (messageConnect.message_connect_status == "active") {
+        const otherAccount = await accountService.getAccountByAccountId(
+          messageConnect.account_id_1 == account_id
+            ? messageConnect.account_id_2
+            : messageConnect.account_id_1
+        );
+        if (otherAccount.role == "member" && otherAccount.is_listener == false) {
+          await messageConnectService.updateMessageConnect(
+            messageConnect.message_connect_id,
+            {
+              message_connect_status: "inactive",
+            }
+          );
+        }
+      }
+    }
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+}

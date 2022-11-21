@@ -12,6 +12,10 @@ module.exports = (sequelize, Sequelize) => {
         text: Sequelize.TEXT,
         img: Sequelize.JSON,
         cover_image_url: Sequelize.STRING,
+        count_read: {
+          type:Sequelize.INTEGER,
+          defaultValue: 0,
+        },
         post_type: {
           type: Sequelize.ENUM,
           allowNull: false,

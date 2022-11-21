@@ -12,6 +12,8 @@ const topicController = require("../controllers/topicController");
 const moodController = require("../controllers/moodController");
 const moodDiaryController = require("../controllers/moodDiaryController");
 const diaryController = require("../controllers/diaryController");
+const followController = require("../controllers/followController");
+const ratingController = require("../controllers/ratingController");
 
 router.post("/member/createAccount", accountController.createAccountMember);
 router.put("/member/confirmEmail", accountController.confirmEmail);
@@ -32,10 +34,12 @@ router.get("/member/getPost/:post_id",checkLogin , postController.getPost);
 router.get("/member/getAllPost",checkLogin, postController.getAllPost);
 router.get("/member/getAllPostAccountPage/:account_id",checkLogin , postController.getAllPostAccountPagination);
 router.get("/member/getAllPostPage", checkLogin, postController.getAllPostPagination);
+router.get("/member/getAllPostSearchTagPage", checkLogin, postController.getAllPostByTagIdOrPostTagAndSearchPagination);
 router.get("/member/getAllMyPostPage",auth , postController.getAllMyPostPagination);
 router.get("/member/getAllMyPost",auth , postController.getAllMyPost);
 router.get("/member/getAllRepost/:refer_post_id",checkLogin, postController.getAllRepost);
 router.put("/member/updatePost",auth , postController.updatePost);
+router.put("/member/updatePostArticle",auth , postController.updatePostArticle);
 router.delete("/member/deletePost/:post_id",auth , postController.deletePost);
 
 router.post("/member/createTag", tagController.createTag);
@@ -79,5 +83,12 @@ router.get("/member/getDiaryMonth/:date",auth , diaryController.getDiaryMonth);
 router.get("/member/getDiaryYear/:year",auth , diaryController.getDiaryYear);
 router.put("/member/updateDiary",auth , diaryController.updateDiary);
 router.delete("/member/deleteDiary/:diary_id",auth , diaryController.deleteDiary);
+
+router.post("/member/createFollow",auth , followController.createFollow);
+router.delete("/member/deleteFollow/:follow_account_id",auth , followController.deleteFollow);
+router.get("/member/getFollowByAccountId/:account_id", followController.getFollowByAccountId);
+
+router.post("/member/createRating",auth , ratingController.createRating);
+router.get("/member/getRatingByAccountId/:account_id", ratingController.getRatingByAccountId);
 
 module.exports = router;

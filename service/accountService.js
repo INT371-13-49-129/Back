@@ -1,7 +1,8 @@
 const { Op } = require("sequelize");
 const moment = require("moment");
 const database = require("../config/database");
-const { account, account_topic, topic, post, sequelize } = database;
+const { account, account_topic, topic, post, follow, rating, sequelize } =
+  database;
 
 exports.createAccount = (data) => {
   try {
@@ -68,7 +69,46 @@ exports.getAccountByAccountId = (account_id) => {
           where: {
             is_delete: false,
           },
-          attributes: ["post_id"],
+          attributes: ["post_id", "post_type"],
+        },
+        {
+          model: follow,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["follow_id", "account_id", "created_at", "updated_at"],
+        },
+        {
+          model: follow,
+          required: false,
+          as: "account_follower",
+          where: {
+            is_delete: false,
+          },
+          attributes: [
+            "follow_id",
+            "account_id_follower",
+            "created_at",
+            "updated_at",
+          ],
+        },
+        {
+          model: rating,
+          as: 'account_reviewer',
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: [
+            "rating_id",
+            "account_id",
+            "account_id_reviewer",
+            "created_at",
+            "updated_at",
+            "rating_score",
+            "review",
+          ],
         },
       ],
     });
@@ -96,7 +136,14 @@ exports.getAllAccount = () => {
       where: {
         is_delete: false,
       },
-      attributes: ["account_id", "username", "name", "role", "image_url", "is_listener"],
+      attributes: [
+        "account_id",
+        "username",
+        "name",
+        "role",
+        "image_url",
+        "is_listener",
+      ],
       include: [
         {
           model: account_topic,
