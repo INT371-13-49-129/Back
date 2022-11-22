@@ -281,6 +281,10 @@ exports.createRequest = async (req, res) => {
         errorMessage: `Account Id(${account_id}) don't have permission to Create Request Message Connect Id(${message_connect_id})`,
       });
     if (messageConnect.message_connect_status == "inactive") {
+      await messageConnectService.updateMessageConnect(message_connect_id, {
+        message_connect_status: "waiting",
+        last_messages: sequelize.fn("NOW"),
+      });
       await requestService.createRequest({
         message_connect_id,
         account_id,
@@ -290,12 +294,63 @@ exports.createRequest = async (req, res) => {
       const request = await requestService.getRequestByMessageConnectId(
         messageConnect.message_connect_id
       );
+      await messageConnectService.updateMessageConnect(message_connect_id, {
+        last_messages: sequelize.fn("NOW"),
+      });
       await requestService.updateRequest(request.request_id, {
         text,
       });
     }
+    res.io.emit("message_connect_id_" + message_connect_id, message_connect_id);
+    res.io.emit(
+      "message_account_id_" + messageConnect.account_id_1,
+      messageConnect.account_id_1
+    );
+    res.io.emit(
+      "message_account_id_" + messageConnect.account_id_2,
+      messageConnect.account_id_2
+    );
     res.status(200).send({
       status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.getRequestByMessageConnectId = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { message_connect_id } = req.params;
+  try {
+    const messageConnect =
+      await messageConnectService.getMessageConnectByMessageConnectId(
+        message_connect_id
+      );
+    if (!messageConnect)
+      return errorResponse(res, {
+        statusResponse: 400,
+        statusCode: statusCode(5002),
+        errorMessage: `Message Connect Id(${message_connect_id}) Does not exist`,
+      });
+    if (
+      messageConnect.account_id_1 != account_id &&
+      messageConnect.account_id_2 != account_id
+    )
+      return errorResponse(res, {
+        statusResponse: 401,
+        statusCode: statusCode(2007),
+        errorMessage: `Account Id(${account_id}) don't have permission to Get Request Message Connect Id(${message_connect_id})`,
+      });
+    const request = await requestService.getRequestByMessageConnectId(
+      message_connect_id
+    );
+    res.status(200).send({
+      request,
     });
   } catch (error) {
     console.log(error);
@@ -338,9 +393,6 @@ exports.acceptRequest = async (req, res) => {
       });
     }
     if (messageConnect.message_connect_status == "waiting") {
-      await messageConnectService.updateMessageConnect(message_connect_id, {
-        message_connect_status: "active",
-      });
       const request = await requestService.getRequestByMessageConnectId(
         messageConnect.message_connect_id
       );
@@ -361,9 +413,28 @@ exports.acceptRequest = async (req, res) => {
           errorMessage: `Request Account Id(${request.account_id}) is not in Message Connect Id(${message_connect_id})`,
         });
       }
+      await messageService.createMessage({
+        message_connect_id,
+        account_id: request.account_id,
+        text: request.text,
+        created_at: request.updated_at,
+      });
+      await messageConnectService.updateMessageConnect(message_connect_id, {
+        message_connect_status: "active",
+        last_messages: sequelize.fn("NOW"),
+      });
       await requestService.updateRequest(request.request_id, {
         request_status: "Accept",
       });
+      res.io.emit(
+        "message_connect_id_" + message_connect_id,
+        message_connect_id
+      );
+      res.io.emit("message_account_id_" + account_id, account_id);
+      res.io.emit(
+        "message_account_id_" + request.account_id,
+        request.account_id
+      );
     }
     res.status(200).send({
       status: "success",
@@ -436,6 +507,15 @@ exports.rejectRequest = async (req, res) => {
         request_status: "Reject",
       });
     }
+    res.io.emit("message_connect_id_" + message_connect_id, message_connect_id);
+    res.io.emit(
+      "message_account_id_" + messageConnect.account_id_1,
+      messageConnect.account_id_1
+    );
+    res.io.emit(
+      "message_account_id_" + messageConnect.account_id_2,
+      messageConnect.account_id_2
+    );
     res.status(200).send({
       status: "success",
     });
@@ -494,6 +574,15 @@ exports.activateMessageConnect = async (req, res) => {
     await messageConnectService.updateMessageConnect(message_connect_id, {
       message_connect_status: "active",
     });
+    res.io.emit("message_connect_id_" + message_connect_id, message_connect_id);
+    res.io.emit(
+      "message_account_id_" + messageConnect.account_id_1,
+      messageConnect.account_id_1
+    );
+    res.io.emit(
+      "message_account_id_" + messageConnect.account_id_2,
+      messageConnect.account_id_2
+    );
     res.status(200).send({
       status: "success",
     });
@@ -540,6 +629,15 @@ exports.deactivateMessageConnect = async (req, res) => {
     await messageConnectService.updateMessageConnect(message_connect_id, {
       message_connect_status: "inactive",
     });
+    res.io.emit("message_connect_id_" + message_connect_id, message_connect_id);
+    res.io.emit(
+      "message_account_id_" + messageConnect.account_id_1,
+      messageConnect.account_id_1
+    );
+    res.io.emit(
+      "message_account_id_" + messageConnect.account_id_2,
+      messageConnect.account_id_2
+    );
     res.status(200).send({
       status: "success",
     });
@@ -566,12 +664,27 @@ exports.deactivateAllMessageConnect = async (req, res) => {
             ? messageConnect.account_id_2
             : messageConnect.account_id_1
         );
-        if (otherAccount.role == "member" && otherAccount.is_listener == false) {
+        if (
+          otherAccount.role == "member" &&
+          otherAccount.is_listener == false
+        ) {
           await messageConnectService.updateMessageConnect(
             messageConnect.message_connect_id,
             {
               message_connect_status: "inactive",
             }
+          );
+          res.io.emit(
+            "message_connect_id_" + messageConnect.message_connect_id,
+            messageConnect.message_connect_id
+          );
+          res.io.emit(
+            "message_account_id_" + messageConnect.account_id_1,
+            messageConnect.account_id_1
+          );
+          res.io.emit(
+            "message_account_id_" + messageConnect.account_id_2,
+            messageConnect.account_id_2
           );
         }
       }
@@ -587,4 +700,4 @@ exports.deactivateAllMessageConnect = async (req, res) => {
       errorMessage: error,
     });
   }
-}
+};

@@ -24,7 +24,10 @@ router.delete("/member/logoutMember",auth ,accountController.logoutMember);
 router.get("/member/getAllAccount",auth ,accountController.getAllAccount);
 router.get("/member/account/:account_id" ,accountController.getAccountByAccountId);
 router.put("/member/updateAccountProfile",auth , accountController.updateAccountProfile);
+router.put("/member/updateAccountListener",auth , accountController.updateAccountListener);
 router.put("/member/requestPsychologist",auth , accountController.requestPsychologist);
+router.get("/member/getAllAccountPsychologistPagination",auth , accountController.getAllAccountPsychologistPagination);
+router.get("/member/getAllAccountIsListenerPagination",auth , accountController.getAllAccountIsListenerPagination);
 
 router.put("/member/approveRequestPsychologist", accountController.approveRequestPsychologist);
 
@@ -58,6 +61,14 @@ router.get("/member/getAllMessageConnect",auth ,messageController.getAllMessageC
 
 router.post("/member/createMessage",auth ,messageController.createMessage);
 router.put("/member/readMessage",auth ,messageController.readMessage);
+
+router.post("/member/createRequest",auth ,messageController.createRequest);
+router.get("/member/getRequest/:message_connect_id",auth ,messageController.getRequestByMessageConnectId);
+router.put("/member/acceptRequest",auth ,messageController.acceptRequest);
+router.put("/member/rejectRequest",auth ,messageController.rejectRequest);
+router.put("/member/activateMessageConnect",auth ,messageController.activateMessageConnect);
+router.put("/member/deactivateMessageConnect",auth ,messageController.deactivateMessageConnect);
+router.put("/member/deactivateAllMessageConnect",auth ,messageController.deactivateAllMessageConnect);
 
 router.post("/member/uploadFile",auth ,fileController.uploadFile);
 router.get("/member/getFile/:file_id" ,fileController.getFile);

@@ -176,17 +176,27 @@ exports.loginMember = async (req, res) => {
           image_url: user.image_url,
           cover_image_url: user.cover_image_url,
           date_of_birth: user.date_of_birth,
+          approve: user.approve,
+          file_approve: user.file_approve,
+          description: user.description,
           is_listener: user.is_listener,
           account_topics: user.account_topics,
           createdAt: user.createdAt,
-          countPost: user.posts.filter((post) => post.post_type == "Post").length,
-          countPostArticle: user.posts.filter((post) => post.post_type == "Article").length,
+          countPost: user.posts.filter((post) => post.post_type == "Post")
+            .length,
+          countPostArticle: user.posts.filter(
+            (post) => post.post_type == "Article"
+          ).length,
           name: user.name,
           role: user.role,
           account_follower: user.account_follower,
           follows: user.follows,
           account_reviewer: user.account_reviewer,
-          avgRatings: user.account_reviewer.length > 0 ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) / user.account_reviewer.length : 0,
+          avgRatings:
+            user.account_reviewer.length > 0
+              ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) /
+                user.account_reviewer.length
+              : 0,
         },
       });
     } else {
@@ -220,17 +230,26 @@ exports.getAccount = async (req, res) => {
         image_url: user.image_url,
         cover_image_url: user.cover_image_url,
         date_of_birth: user.date_of_birth,
+        approve: user.approve,
+        file_approve: user.file_approve,
+        description: user.description,
         is_listener: user.is_listener,
         account_topics: user.account_topics,
         createdAt: user.createdAt,
         countPost: user.posts.filter((post) => post.post_type == "Post").length,
-        countPostArticle: user.posts.filter((post) => post.post_type == "Article").length,
+        countPostArticle: user.posts.filter(
+          (post) => post.post_type == "Article"
+        ).length,
         name: user.name,
         role: user.role,
         account_follower: user.account_follower,
         follows: user.follows,
         account_reviewer: user.account_reviewer,
-        avgRatings: user.account_reviewer.length > 0 ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) / user.account_reviewer.length : 0,
+        avgRatings:
+          user.account_reviewer.length > 0
+            ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) /
+              user.account_reviewer.length
+            : 0,
       },
     });
   } catch (error) {
@@ -259,13 +278,20 @@ exports.getAccountByAccountId = async (req, res) => {
         account_topics: user.account_topics,
         createdAt: user.createdAt,
         countPost: user.posts.filter((post) => post.post_type == "Post").length,
-        countPostArticle: user.posts.filter((post) => post.post_type == "Article").length,
+        countPostArticle: user.posts.filter(
+          (post) => post.post_type == "Article"
+        ).length,
         name: user.name,
+        description: user.description,
         role: user.role,
         account_follower: user.account_follower,
         follows: user.follows,
         account_reviewer: user.account_reviewer,
-        avgRatings: user.account_reviewer.length > 0 ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) / user.account_reviewer.length : 0,
+        avgRatings:
+          user.account_reviewer.length > 0
+            ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) /
+              user.account_reviewer.length
+            : 0,
       },
     });
   } catch (error) {
@@ -314,11 +340,120 @@ exports.getAllAccount = async (req, res) => {
   }
 };
 
+exports.getAllAccountPsychologistPagination = async (req, res) => {
+  const { account_id } = req.jwt;
+  let { limit = 5, page = 1 } = req.query;
+  limit = parseInt(limit);
+  page = parseInt(page);
+  let offset = page === 1 ? 0 : (page - 1) * limit;
+  try {
+    let response = await accountService.getAllAccountPsychologistPagination(
+      account_id,
+      limit,
+      offset
+    );
+    const accounts = response.rows.map((user) => {
+      return {
+        account_id: user.account_id,
+        username: user.username,
+        gender: user.gender,
+        bio: user.bio,
+        image_url: user.image_url,
+        cover_image_url: user.cover_image_url,
+        is_listener: user.is_listener,
+        account_topics: user.account_topics,
+        createdAt: user.createdAt,
+        countPost: user.posts.filter((post) => post.post_type == "Post").length,
+        countPostArticle: user.posts.filter(
+          (post) => post.post_type == "Article"
+        ).length,
+        name: user.name,
+        description: user.description,
+        role: user.role,
+        account_follower: user.account_follower,
+        follows: user.follows,
+        account_reviewer: user.account_reviewer,
+        avgRatings:
+          user.account_reviewer.length > 0
+            ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) /
+              user.account_reviewer.length
+            : 0,
+      };
+    });
+    return res.status(200).send({
+      count: response.count,
+      accounts,
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
+exports.getAllAccountIsListenerPagination = async (req, res) => {
+  const { account_id } = req.jwt;
+  let { limit = 5, page = 1 } = req.query;
+  limit = parseInt(limit);
+  page = parseInt(page);
+  let offset = page === 1 ? 0 : (page - 1) * limit;
+  try {
+    let response = await accountService.getAllAccountIsListenerPagination(
+      account_id,
+      limit,
+      offset
+    );
+    const accounts = response.rows.map((user) => {
+      return {
+        account_id: user.account_id,
+        username: user.username,
+        gender: user.gender,
+        bio: user.bio,
+        image_url: user.image_url,
+        cover_image_url: user.cover_image_url,
+        is_listener: user.is_listener,
+        account_topics: user.account_topics,
+        createdAt: user.createdAt,
+        countPost: user.posts.filter((post) => post.post_type == "Post").length,
+        countPostArticle: user.posts.filter(
+          (post) => post.post_type == "Article"
+        ).length,
+        name: user.name,
+        description: user.description,
+        role: user.role,
+        account_follower: user.account_follower,
+        follows: user.follows,
+        account_reviewer: user.account_reviewer,
+        avgRatings:
+          user.account_reviewer.length > 0
+            ? user.account_reviewer.reduce((a, b) => a + b.rating_score, 0) /
+              user.account_reviewer.length
+            : 0,
+      };
+    });
+    return res.status(200).send({
+      count: response.count,
+      accounts,
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
 exports.updateAccountProfile = async (req, res) => {
   const { account_id } = req.jwt;
   const {
     username,
     name,
+    description,
     gender,
     bio,
     date_of_birth,
@@ -346,6 +481,7 @@ exports.updateAccountProfile = async (req, res) => {
     const account_update = {
       username,
       name,
+      description,
       gender,
       bio,
       date_of_birth,
@@ -381,16 +517,26 @@ exports.updateAccountProfile = async (req, res) => {
       image_url: account.image_url,
       cover_image_url: account.cover_image_url,
       date_of_birth: account.date_of_birth,
+      approve: account.approve,
+      file_approve: account.file_approve,
+      description: account.description,
       is_listener: account.is_listener,
       account_topics: account.account_topics,
-      countPost: account.posts.filter((post) => post.post_type == "Post").length,
-      countPostArticle: account.posts.filter((post) => post.post_type == "Article").length,
+      countPost: account.posts.filter((post) => post.post_type == "Post")
+        .length,
+      countPostArticle: account.posts.filter(
+        (post) => post.post_type == "Article"
+      ).length,
       name: account.name,
       role: account.role,
       account_follower: account.account_follower,
       follows: account.follows,
       account_reviewer: account.account_reviewer,
-      avgRatings: account.account_reviewer.length > 0 ? account.account_reviewer.reduce((a, b) => a + b.rating_score, 0) / account.account_reviewer.length : 0,
+      avgRatings:
+        account.account_reviewer.length > 0
+          ? account.account_reviewer.reduce((a, b) => a + b.rating_score, 0) /
+            account.account_reviewer.length
+          : 0,
     };
     await logEditService.createLogEdit({ account_id, log_data });
     res.status(200).send({
@@ -406,9 +552,34 @@ exports.updateAccountProfile = async (req, res) => {
   }
 };
 
+exports.updateAccountListener = async (req, res) => {
+  const { account_id } = req.jwt;
+  const { is_listener } = req.body;
+  try {
+    const account = await accountService.getAccountByAccountId(account_id);
+    if (!account)
+      return errorResponse(res, {
+        statusResponse: 404,
+        statusCode: statusCode(2003),
+        errorMessage: `Account Id(${account_id}) Does not exist`,
+      });
+    await accountService.updateAccount(account_id, { is_listener });
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+};
+
 exports.requestPsychologist = async (req, res) => {
   const { account_id } = req.jwt;
-  const { file_approve, name } = req.body;
+  const { file_approve, name, description } = req.body;
   try {
     const account = await accountService.getAccountByAccountId(account_id);
     if (!account)
@@ -419,6 +590,7 @@ exports.requestPsychologist = async (req, res) => {
       });
     const account_update = {
       file_approve,
+      description,
       name,
       approve: "Waiting",
     };

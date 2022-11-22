@@ -21,6 +21,7 @@ module.exports = (sequelize, Sequelize) => {
         values: ["Male", "Female", "Unspecified"],
       },
       bio: Sequelize.TEXT,
+      description: Sequelize.TEXT,
       image_url: Sequelize.STRING,
       cover_image_url: Sequelize.STRING,
       date_of_birth: Sequelize.DATEONLY,
