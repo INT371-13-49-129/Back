@@ -8,8 +8,8 @@ services:
       - MYSQL_USER=root
       - MYSQL_ROOT_PASSWORD=kamin124712
     networks:
-       allnetwork:
-          ipv4_address: 172.20.0.3
+      allnetwork:
+        ipv4_address: 172.20.0.3
 
   cache:
     container_name: redis
@@ -18,9 +18,11 @@ services:
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning
-    volumes: 
+    volumes:
       - cache:/data
-
+    networks:
+      allnetwork:
+        ipv4_address: 172.20.0.5
 volumes:
   cache:
     driver: local
