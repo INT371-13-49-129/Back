@@ -5,7 +5,7 @@ require("dotenv").config();
 config = {
   port: process.env.PORT || 3000,
   host: process.env.HOST || "20.2.225.17",
-  redis: process.env.REDIS || "127.20.0.5",
+  redis: process.env.REDIS || "172.20.0.5",
   user: process.env.USER_DB || "root",
   port_db: process.env.PORT_DB || "3306",
   password: process.env.PASS_DB || "kamin124712",
