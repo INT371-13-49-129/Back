@@ -1,5 +1,18 @@
 version: "3"
 services:
+  cache:
+    container_name: redis
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server
+    volumes: 
+      - cache:/data
+    networks:
+      allnetwork:
+        ipv4_address: 172.20.0.5
+
   backend:
     container_name: backend
     image: ghcr.io/int371-13-49-129/int371back:dev
@@ -10,19 +23,6 @@ services:
     networks:
       allnetwork:
         ipv4_address: 172.20.0.3
-
-  cache:
-    container_name: redis
-    image: redis:6.2-alpine
-    restart: always
-    ports:
-      - '6379:6379'
-    command: redis-server --save 20 1
-    volumes: 
-      - cache:/data
-    networks:
-      allnetwork:
-        ipv4_address: 172.20.0.5
 
 volumes:
   cache:
