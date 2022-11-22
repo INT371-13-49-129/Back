@@ -7,7 +7,7 @@ const redis = require("redis");
 const config = require("../config/config");
 
 const client = redis.createClient({
-  url: 'redis://redis:6379'
+  url: 'cache://cache:6379'
   });
 client
   .connect()
