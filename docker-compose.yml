@@ -10,8 +10,7 @@ services:
     volumes: 
       - cache:/data
     networks:
-      allnetwork:
-        ipv4_address: 172.20.0.5
+      allnetwork
 
   backend:
     container_name: backend
