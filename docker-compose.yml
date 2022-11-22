@@ -1,5 +1,16 @@
 version: "3"
 services:
+  backend:
+    container_name: backend
+    image: ghcr.io/int371-13-49-129/int371back:dev
+    environment:
+      - MYSQL_DATABASE=jaid_db
+      - MYSQL_USER=root
+      - MYSQL_ROOT_PASSWORD=kamin124712
+    networks:
+       allnetwork:
+          ipv4_address: 172.20.0.3
+
   cache:
     container_name: redis
     image: redis:6.2-alpine
@@ -9,18 +20,6 @@ services:
     command: redis-server
     volumes: 
       - cache:/data
-    networks:
-      allnetwork
-
-  backend:
-    container_name: backend
-    image: ghcr.io/int371-13-49-129/int371back:dev
-    environment:
-      - MYSQL_DATABASE=jaid_db
-      - MYSQL_USER=root
-      - MYSQL_ROOT_PASSWORD=kamin124712
-    networks:
-      allnetwork
 
 volumes:
   cache:
