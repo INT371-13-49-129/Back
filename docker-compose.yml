@@ -11,13 +11,16 @@ services:
       allnetwork:
         ipv4_address: 172.20.0.3
 
-  cache:
+  redis:
     container_name: redis
     image: redis:6.2-alpine
     ports:
       - "6379:6379"
-    volumes: 
-      - cache:/data
+    volumes:
+      - $PWD/redis-data:/var/lib/redis
+      - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_REPLICATION_MODE=master
 
 networks:
   default:
@@ -25,7 +28,3 @@ networks:
       name: allnetwork
   allnetwork:
     external: true
-
-volumes:
-  cache:
-    driver: local
