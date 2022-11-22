@@ -7,8 +7,8 @@ const redis = require("redis");
 const config = require("../config/config");
 
 const client = redis.createClient({
-  host: config.redis,
-  port: 6379,
+  url: "rediss://" + "Jaid.redis.cache.windows.net" + ":6380",
+  password: "gOxlPe5a7Pl9580pAZ74c7bpIFqjqALHnAzCaBheZWU=",
   });
 client
   .connect()

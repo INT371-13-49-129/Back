@@ -10,18 +10,18 @@ services:
     networks:
       allnetwork:
         ipv4_address: 172.20.0.3
-    depends_on:
-      - cache
-  cache:
-    container_name: redis
-    images: "redis:alpine"
-    volumes:
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
-    network:
-      allnetwork:
-        ipv4_address: 172.20.0.5
-    ports:
-      - "6379:6379"
+    # depends_on:
+    #   - cache
+  # cache:
+  #   container_name: redis
+  #   images: "redis:alpine"
+  #   volumes:
+  #     - ./redis.conf:/usr/local/etc/redis/redis.conf
+  #   network:
+  #     allnetwork:
+  #       ipv4_address: 172.20.0.5
+  #   ports:
+  #     - "6379:6379"
 networks:
   default:
     external:
