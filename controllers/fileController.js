@@ -46,7 +46,6 @@ exports.uploadFile = async (req, res) => {
           contentType: req.file.mimetype,
         },
       });
-
       blobStream.on("error", (err) => {
         res.status(405).json(err);
       });
@@ -54,6 +53,7 @@ exports.uploadFile = async (req, res) => {
       blobStream.on("finish", () => {
         res.status(200).send({
           status: "success",
+          name: req.file.originalname,
           file_id,
         });
       });

@@ -95,7 +95,7 @@ exports.getAccountByAccountId = (account_id) => {
         },
         {
           model: rating,
-          as: 'account_reviewer',
+          as: "account_reviewer",
           required: false,
           where: {
             is_delete: false,
@@ -163,6 +163,179 @@ exports.getAllAccount = () => {
           ],
         },
       ],
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getAllAccountPsychologistPagination = (account_id, limit, offset) => {
+  try {
+    return account.findAndCountAll({
+      where: {
+        is_delete: false,
+        role: "Psychologist",
+        account_id: {
+          [Op.ne]: account_id,
+        },
+      },
+      include: [
+        {
+          model: account_topic,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["account_topic_id"],
+          include: [
+            {
+              model: topic,
+              required: false,
+              where: {
+                is_delete: false,
+              },
+              attributes: ["topic_id", "name"],
+            },
+          ],
+        },
+        {
+          model: post,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["post_id", "post_type"],
+        },
+        {
+          model: follow,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["follow_id", "account_id", "created_at", "updated_at"],
+        },
+        {
+          model: follow,
+          required: false,
+          as: "account_follower",
+          where: {
+            is_delete: false,
+          },
+          attributes: [
+            "follow_id",
+            "account_id_follower",
+            "created_at",
+            "updated_at",
+          ],
+        },
+        {
+          model: rating,
+          as: "account_reviewer",
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: [
+            "rating_id",
+            "account_id",
+            "account_id_reviewer",
+            "created_at",
+            "updated_at",
+            "rating_score",
+            "review",
+          ],
+        },
+      ],
+      limit,
+      offset,
+      distinct: true,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getAllAccountIsListenerPagination = (account_id, limit, offset) => {
+  try {
+    return account.findAndCountAll({
+      where: {
+        is_delete: false,
+        is_listener: true,
+        role:"Member",
+        account_id: {
+          [Op.ne]: account_id,
+        },
+      },
+      include: [
+        {
+          model: account_topic,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["account_topic_id"],
+          include: [
+            {
+              model: topic,
+              required: false,
+              where: {
+                is_delete: false,
+              },
+              attributes: ["topic_id", "name"],
+            },
+          ],
+        },
+        {
+          model: post,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["post_id", "post_type"],
+        },
+        {
+          model: follow,
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: ["follow_id", "account_id", "created_at", "updated_at"],
+        },
+        {
+          model: follow,
+          required: false,
+          as: "account_follower",
+          where: {
+            is_delete: false,
+          },
+          attributes: [
+            "follow_id",
+            "account_id_follower",
+            "created_at",
+            "updated_at",
+          ],
+        },
+        {
+          model: rating,
+          as: "account_reviewer",
+          required: false,
+          where: {
+            is_delete: false,
+          },
+          attributes: [
+            "rating_id",
+            "account_id",
+            "account_id_reviewer",
+            "created_at",
+            "updated_at",
+            "rating_score",
+            "review",
+          ],
+        },
+      ],
+      limit,
+      offset,
+      distinct: true,
     });
   } catch (error) {
     throw error;
