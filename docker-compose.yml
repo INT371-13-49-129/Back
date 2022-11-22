@@ -22,8 +22,6 @@ services:
       - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
     environment:
       - REDIS_REPLICATION_MODE=master
-    depends_on:
-      - backend
 
 networks:
   default:
