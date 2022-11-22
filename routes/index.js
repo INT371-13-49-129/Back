@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { auth, checkLogin } = require("../utils/jwt");
+const { auth, checkLogin, authAdmin } = require("../utils/jwt");
 const accountController = require("../controllers/accountController");
 const postController = require("../controllers/postController");
 const tagController = require("../controllers/tagController");
@@ -14,6 +14,7 @@ const moodDiaryController = require("../controllers/moodDiaryController");
 const diaryController = require("../controllers/diaryController");
 const followController = require("../controllers/followController");
 const ratingController = require("../controllers/ratingController");
+const reportController = require("../controllers/reportController");
 
 router.post("/member/createAccount", accountController.createAccountMember);
 router.put("/member/confirmEmail", accountController.confirmEmail);
@@ -29,7 +30,8 @@ router.put("/member/requestPsychologist",auth , accountController.requestPsychol
 router.get("/member/getAllAccountPsychologistPagination",auth , accountController.getAllAccountPsychologistPagination);
 router.get("/member/getAllAccountIsListenerPagination",auth , accountController.getAllAccountIsListenerPagination);
 
-router.put("/member/approveRequestPsychologist", accountController.approveRequestPsychologist);
+router.get("/admin/getAllAccountRequestPsychologist",authAdmin , accountController.getAllAccountRequestPsychologist);
+router.put("/admin/approveRequestPsychologist",authAdmin, accountController.approveRequestPsychologist);
 
 router.post("/member/createPost",auth ,postController.createPost);
 router.post("/member/createPostArticle",auth ,postController.createPostArticle);
@@ -101,5 +103,8 @@ router.get("/member/getFollowByAccountId/:account_id", followController.getFollo
 
 router.post("/member/createRating",auth , ratingController.createRating);
 router.get("/member/getRatingByAccountId/:account_id", ratingController.getRatingByAccountId);
+
+router.post("/member/createReport",auth , reportController.createReport);
+router.get("/admin/getAllReport",authAdmin , reportController.getAllReport);
 
 module.exports = router;

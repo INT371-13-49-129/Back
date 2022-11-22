@@ -635,3 +635,48 @@ exports.approveRequestPsychologist = async (req, res) => {
     });
   }
 };
+
+exports.rejectRequestPsychologist = async (req, res) => {
+  const { account_id } = req.body;
+  try {
+    const account = await accountService.getAccountByAccountId(account_id);
+    if (!account)
+      return errorResponse(res, {
+        statusResponse: 404,
+        statusCode: statusCode(2003),
+        errorMessage: `Account Id(${account_id}) Does not exist`,
+      });
+    const account_update = {
+      approve: "Reject",
+      role: "Member",
+    };
+    await accountService.updateAccount(account_id, account_update);
+    res.status(200).send({
+      status: "success",
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+}
+
+exports.getAllAccountRequestPsychologist = async (req, res) => {
+  try {
+    const accounts = await accountService.getAllAccountRequestPsychologist();
+    res.status(200).send({
+      status: "success",
+      data: accounts,
+    });
+  } catch (error) {
+    console.log(error);
+    errorResponse(res, {
+      statusResponse: 500,
+      statusCode: statusCode(1001),
+      errorMessage: error,
+    });
+  }
+}

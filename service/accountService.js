@@ -341,3 +341,20 @@ exports.getAllAccountIsListenerPagination = (account_id, limit, offset) => {
     throw error;
   }
 };
+
+exports.getAllAccountRequestPsychologist= () => {
+  try {
+    return account.findAll({
+      where: {
+        is_delete: false,
+        role: "Member",
+        approve: "Waiting",
+      },
+      attributes: {
+        exclude: ["password"],
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+}
