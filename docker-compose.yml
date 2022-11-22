@@ -20,8 +20,7 @@ services:
       - MYSQL_USER=root
       - MYSQL_ROOT_PASSWORD=kamin124712
     networks:
-      allnetwork:
-        ipv4_address: 172.20.0.3
+      allnetwork
 
 volumes:
   cache:
