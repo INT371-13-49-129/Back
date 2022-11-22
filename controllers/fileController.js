@@ -9,7 +9,10 @@ const config = require("../config/config");
 const client = redis.createClient({
   url: "rediss://" + "Jaid.redis.cache.windows.net" + ":6380",
   password: "gOxlPe5a7Pl9580pAZ74c7bpIFqjqALHnAzCaBheZWU=",
-  });
+});
+client.on("error", function (error) {
+  console.error(error);
+});
 client
   .connect()
   .then(async (res) => {
