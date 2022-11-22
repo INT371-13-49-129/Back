@@ -10,18 +10,6 @@ services:
     networks:
       allnetwork:
         ipv4_address: 172.20.0.3
-
-  cache:
-    container_name: redis
-    image: "redis:alpine"
-    command: redis-server
-    ports:
-      - "6379:6379"
-    environment:
-      - REDIS_REPLICATION_MODE=master
-    networks:
-      allnetwork:
-        ipv4_address: 172.20.0.5
 networks:
   default:
     external:
