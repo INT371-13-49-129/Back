@@ -7,9 +7,8 @@ const redis = require("redis");
 const config = require("../config/config");
 
 const client = redis.createClient({
-  host: config.redis,
-  port: 6379,
-});
+  url: 'redis://redis:6379'
+  });
 client
   .connect()
   .then(async (res) => {
