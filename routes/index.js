@@ -32,6 +32,7 @@ router.get("/member/getAllAccountIsListenerPagination",auth , accountController.
 
 router.get("/admin/getAllAccountRequestPsychologist",authAdmin , accountController.getAllAccountRequestPsychologist);
 router.put("/admin/approveRequestPsychologist",authAdmin, accountController.approveRequestPsychologist);
+router.put("/admin/rejectRequestPsychologist",authAdmin, accountController.rejectRequestPsychologist);
 
 router.post("/member/createPost",auth ,postController.createPost);
 router.post("/member/createPostArticle",auth ,postController.createPostArticle);
