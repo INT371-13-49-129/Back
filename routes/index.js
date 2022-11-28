@@ -48,7 +48,7 @@ router.put("/member/updatePost",auth , postController.updatePost);
 router.put("/member/updatePostArticle",auth , postController.updatePostArticle);
 router.delete("/member/deletePost/:post_id",auth , postController.deletePost);
 
-router.post("/member/createTag", tagController.createTag);
+router.post("/admin/createTag",authAdmin , tagController.createTag);
 router.get("/member/getAllTag", tagController.getAllTag);
 
 router.post("/member/createComment",auth ,commentController.createComment);
@@ -76,10 +76,10 @@ router.put("/member/deactivateAllMessageConnect",auth ,messageController.deactiv
 router.post("/member/uploadFile",auth ,fileController.uploadFile);
 router.get("/member/getFile/:file_id" ,fileController.getFile);
 
-router.post("/member/createTopic", topicController.createTopic);
+router.post("/admin/createTopic",authAdmin , topicController.createTopic);
 router.get("/member/getAllTopic", topicController.getAllTopic);
 
-router.post("/member/createMood", moodController.createMood);
+router.post("/admin/createMood",authAdmin , moodController.createMood);
 router.get("/member/getAllMood", moodController.getAllMood);
 
 router.post("/member/createMoodDiary",auth , moodDiaryController.createMoodDiary);
@@ -106,6 +106,7 @@ router.post("/member/createRating",auth , ratingController.createRating);
 router.get("/member/getRatingByAccountId/:account_id", ratingController.getRatingByAccountId);
 
 router.post("/member/createReport",auth , reportController.createReport);
+
 router.get("/admin/getAllReport",authAdmin , reportController.getAllReport);
 
 module.exports = router;

@@ -201,6 +201,7 @@ function post_include(account_id = null, tag_id = []) {
             publish_status: "Publish",
           },
         ],
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
@@ -347,6 +348,7 @@ exports.getPostByPostId = (post_id, account_id = null) => {
             publish_status: "Publish",
           },
         ],
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
@@ -382,6 +384,7 @@ exports.getAllPost = (account_id = null) => {
             publish_status: "Publish",
           },
         ],
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
@@ -419,6 +422,7 @@ exports.getAllPostAccountPagination = (
         account_id: account_id,
         publish_status: "Publish",
         post_type,
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
@@ -465,6 +469,7 @@ exports.getAllPostPagination = (
           },
         ],
         post_type,
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
@@ -542,6 +547,7 @@ exports.getAllPostByPostTagAndSearchPagination = (
           },
         ],
         post_type,
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
@@ -619,6 +625,7 @@ exports.getAllPostByTagIdAndSearchPagination = (
           },
         ],
         post_type,
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
@@ -652,6 +659,7 @@ exports.getAllMyPost = (account_id) => {
       where: {
         is_delete: false,
         account_id,
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
@@ -687,6 +695,7 @@ exports.getAllMyPostPagination = (
         is_delete: false,
         account_id,
         post_type,
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
@@ -727,6 +736,7 @@ exports.getAllRepost = (refer_post_id, account_id = null) => {
             publish_status: "Publish",
           },
         ],
+        post_status: "Upload",
       },
       attributes: [
         "post_id",
